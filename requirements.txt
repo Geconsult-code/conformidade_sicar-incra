@@ -1,0 +1,5 @@
+geopandas>=1.0
+shapely>=2.0
+pyproj>=3.5
+fiona>=1.9
+pandas>=2.0

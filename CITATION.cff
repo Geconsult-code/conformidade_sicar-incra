@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+message: "Se você usar este software, por favor cite-o conforme os metadados abaixo."
+title: "Conformidade SICAR × INCRA"
+abstract: >-
+  Programa para classificar a coerência entre os imóveis do Cadastro Ambiental
+  Rural (SICAR) e a delimitação fundiária do INCRA (bases SIGEF e SNCI), com
+  filtro de sobreposição espacial e recorte das camadas temáticas (APP, RL e
+  AUR). Roda de forma independente do QGIS, por linha de comando, permitindo o
+  processamento reproduzível de múltiplos estados.
+type: software
+authors:
+  - given-names: "Maurício"
+    family-names: "Braga Meira"
+    affiliation: "Geoconsult Ltda. (Consultoria especializada em geoinformação)"
+version: "0.1.0"
+date-released: "2026-08-10"
+license: MIT
+repository-code: "https://github.com/Geconsult-code/Conformidade_sicar-incra"
+url: "https://github.com/Geconsult-code/Conformidade_sicar-incra"
+keywords:
+  - SICAR
+  - INCRA
+  - CAR
+  - SIGEF
+  - SNCI
+  - geoprocessamento
+  - conformidade fundiária
+  - MRV
+  - APP
+  - Reserva Legal

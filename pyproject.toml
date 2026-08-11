@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "conformidade-sicar-incra"
+version = "0.1.0"
+description = "Classificação de coerência entre imóveis do SICAR e a delimitação fundiária do INCRA (SIGEF/SNCI), com filtro de sobreposição espacial e recorte temático (APP/RL/AUR)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Maurício Braga Meira" },
+    { name = "Geoconsult Ltda. (Consultoria especializada em geoinformação)" },
+]
+keywords = ["SICAR", "INCRA", "CAR", "geoprocessamento", "MRV", "conformidade fundiária"]
+dependencies = [
+    "geopandas>=1.0",
+    "shapely>=2.0",
+    "pyproj>=3.5",
+    "fiona>=1.9",
+    "pandas>=2.0",
+]
+
+[project.urls]
+Repository = "https://github.com/Geconsult-code/Conformidade_sicar-incra"
+
+[project.scripts]
+conformidade = "conformidade.cli:main"
+
+[tool.setuptools]
+packages = ["conformidade"]

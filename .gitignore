@@ -1,0 +1,23 @@
+# Dados (não versionar bases pesadas do SICAR/INCRA)
+*.gpkg
+*.shp
+*.shx
+*.dbf
+*.prj
+*.cpg
+dados/
+saida/
+saidas/
+resultado_*/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Sistema
+.DS_Store
+Thumbs.db
