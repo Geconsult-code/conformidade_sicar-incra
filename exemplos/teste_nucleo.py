@@ -67,8 +67,34 @@ def test_subdivisao():
     assert sub["S2"] == "contido_menor_sobreposto"
 
 
+def test_fases():
+    from conformidade.fases import (
+        classificar_fase, ANALISADO, CANCELADO, EM_ANALISE, AGUARDANDO,
+    )
+    assert classificar_fase("Analisado") == ANALISADO
+    assert classificar_fase("ANALISADO com pendência") == ANALISADO
+    assert classificar_fase("Cancelada por duplicidade") == CANCELADO
+    assert classificar_fase("Em análise") == EM_ANALISE
+    assert classificar_fase("Em Analise") == EM_ANALISE
+    assert classificar_fase("Aguardando análise") == AGUARDANDO
+    assert classificar_fase("AGUARDANDO ANALISE") == AGUARDANDO
+    assert classificar_fase("") is None
+    assert classificar_fase(None) is None
+
+
+def test_filtro_analisados():
+    from conformidade.sobreposicao import sobreposicao_contra_externo
+    ids = ["X1", "X2"]
+    geoms = [quad(0, 0, 1, 1), quad(5, 5, 6, 6)]
+    analisados = [quad(0.5, 0.5, 1.5, 1.5)]  # cobre 25% de X1
+    res = sobreposicao_contra_externo(ids, geoms, analisados, limiar=0.10)
+    assert res["X1"].classe_espacial == "redundante_sobreposto"
+    assert res["X2"].classe_espacial == "representante"
+
+
 def _run_all():
-    fns = [test_motivos, test_sobreposicao, test_subdivisao]
+    fns = [test_motivos, test_sobreposicao, test_subdivisao,
+           test_fases, test_filtro_analisados]
     for fn in fns:
         fn()
         print(f"  OK  {fn.__name__}")

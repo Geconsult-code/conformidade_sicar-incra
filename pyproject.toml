@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "conformidade-sicar-incra"
-version = "0.1.0"
+version = "0.2.0"
 description = "Classificação de coerência entre imóveis do SICAR e a delimitação fundiária do INCRA (SIGEF/SNCI), com filtro de sobreposição espacial e recorte temático (APP/RL/AUR)."
 readme = "README.md"
 requires-python = ">=3.10"

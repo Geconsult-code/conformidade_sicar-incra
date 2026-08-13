@@ -44,6 +44,26 @@ duas naturezas força a comparação de forma e gera uma massa artificial de
 `contido_menor`. Por isso, a classificação é feita **independentemente** contra
 cada natureza, e cada imóvel recebe o rótulo `tipo_incra`.
 
+## 2.5. Etapa 0 — Preparação por fase (`des_condic`)
+
+Quando se parte do download bruto do SICAR (nove planos em shapefile), a
+primeira etapa separa os imóveis pela **fase de análise**, registrada no campo
+`des_condic` do plano `AREA_IMOVEL`. Embora o texto tenha variações
+("derivações"), existem apenas **quatro fases**, identificadas por palavra-chave
+(tolerante a acento e caixa):
+
+| Fase | Destino |
+|------|---------|
+| **Cancelado** (e derivações) | descartado — não entra na análise |
+| **Analisado** (e derivações) | `<UF>_analisados.gpkg` (com os nove planos filtrados) — reservado para análises futuras e usado no **filtro final** |
+| **Em Análise** | `<UF>_trabalho.gpkg` |
+| **Aguardando Análise** | `<UF>_trabalho.gpkg` |
+
+O pacote **trabalho** (Em Análise + Aguardando) é o que alimenta a análise de
+conformidade. O pacote **analisados** é separado porque esses imóveis já
+passaram pelo crivo do órgão competente — servem de referência prioritária no
+final do processo (ver seção 5.5) e de insumo para outras análises.
+
 ## 3. Classificação de coerência (categoria `motivo`)
 
 Para cada imóvel do SICAR, mede-se a relação geométrica com a **união das
@@ -149,14 +169,58 @@ campo `pai_cod` guarda o imóvel maior que mais cobre `X`.
 > seja, o resultado é pouco sensível ao valor exato do limiar. As pequenas
 > sobreposições de borda já haviam sido tratadas com o piso de 1% na subdivisão.
 
-## 6. Recorte temático (APP / RL / AUR)
+## 5.5. Filtro final contra os imóveis Analisado
 
-As feições de APP, RL e AUR do CAR trazem o mesmo `cod_imovel`. O recorte é uma
-**seleção por atributo** (junção pela chave), mantendo apenas as feições dos
-imóveis coerentes desejados. Opcionalmente, os atributos de classificação
-(`motivo`, `classe_espacial`, `frac_max`, `pai_cod`) são anexados às feições
-temáticas, permitindo filtrá-las também por esses eixos. A geometria das feições
-temáticas é preservada integralmente.
+A sobreposição da seção 5 é **interna** ao conjunto de trabalho (Em Análise +
+Aguardando). Falta garantir que o resultado também não se sobreponha aos imóveis
+já **Analisado** — que não entraram na análise por já terem sido decididos pelo
+órgão. Este é o passo final.
+
+Os imóveis marcados `representante` na etapa interna são testados contra o
+conjunto de imóveis **Analisado**:
+
+```
+frac_analisado(X) = área(X ∩ A) / área(X)
+```
+
+tomada sobre o imóvel analisado `A` de maior interseção. Se
+`frac_analisado ≥ limiar_vs_analisado`, o imóvel `X` é descartado do conjunto
+final.
+
+Duas diferenças em relação à sobreposição interna:
+
+1. **Prioridade absoluta do Analisado.** O imóvel analisado nunca é removido —
+   representa uma decisão consolidada. Só o imóvel de trabalho pode sair.
+2. **Independe do tamanho.** Ao contrário da regra interna (onde o "pai" é o
+   maior), aqui o analisado prevalece mesmo que seja menor.
+
+O resultado é consolidado no campo **`selecao_final`**:
+
+| `selecao_final` | significado |
+|-----------------|-------------|
+| `Representante (manter)` | representante interno **e** livre frente aos analisados — entra no conjunto final |
+| `redundante_interno` | descartado já na sobreposição interna (seção 5) |
+| `sobrepoe_analisado` | representante interno, mas sobrepõe um imóvel Analisado |
+
+Assim, o conjunto `Representante (manter)` fica **sem sobreposição entre imóveis
+do SICAR, independentemente da fase** — que é o objetivo para a análise de áreas.
+Os limiares interno e contra-analisados são configuráveis separadamente (padrão
+0,10 em ambos).
+
+## 6. Recorte temático (APPS / RESERVA_LEGAL / USO_RESTRITO)
+
+Para os imóveis `Representante (manter)`, anexam-se ao pacote de trabalho as três
+camadas temáticas relevantes à análise subsequente de áreas: **APPS**,
+**RESERVA_LEGAL** e **USO_RESTRITO**. Essas feições trazem o mesmo `cod_imovel`,
+então o recorte é uma **seleção por atributo** (junção pela chave), mantendo
+apenas as feições dos imóveis a manter. Os atributos de classificação (`motivo`,
+`classe_espacial`, `frac_max`, `pai_cod`, `selecao_final`) são anexados às
+feições, permitindo filtrá-las também por esses eixos. A geometria é preservada
+integralmente.
+
+> As demais camadas (AREA_CONSOLIDADA, HIDROGRAFIA etc.) não entram nesta análise
+> de conformidade, mas ficam preservadas no pacote `<UF>_analisados.gpkg` da
+> etapa 0 para usos posteriores.
 
 ## 7. Conservação
 

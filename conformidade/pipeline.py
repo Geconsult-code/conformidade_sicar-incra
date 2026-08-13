@@ -42,6 +42,8 @@ class ConfigPipeline:
     par_subdivisao: ParametrosSubdivisao = field(default_factory=ParametrosSubdivisao)
     calcular_sobreposicao: bool = True
     limiar_sobreposicao: float = 0.70
+    # Limiar do filtro FINAL contra os imóveis já "Analisado" (etapa final).
+    limiar_vs_analisado: float = 0.10
 
 
 @dataclass
@@ -115,6 +117,54 @@ def aplicar_sobreposicao(
     out["frac_max"] = out[cfg.col_cod].map(lambda c: res[c].frac_max)
     out["pai_cod"] = out[cfg.col_cod].map(lambda c: res[c].pai_cod)
     out["classe_espacial"] = out[cfg.col_cod].map(lambda c: res[c].classe_espacial)
+    return out
+
+
+def aplicar_filtro_analisados(
+    coerentes: gpd.GeoDataFrame,
+    analisados: gpd.GeoDataFrame,
+    cfg: ConfigPipeline,
+) -> gpd.GeoDataFrame:
+    """Etapa final: remove os representantes que se sobrepõem a imóveis
+    já ``Analisado`` (que têm prioridade e nunca são removidos).
+
+    Espera que ``coerentes`` já tenha passado por :func:`aplicar_sobreposicao`
+    (coluna ``classe_espacial``). Acrescenta:
+      - ``vs_analisado``   : 'sobrepoe_analisado' ou 'livre';
+      - ``frac_analisado`` : cobertura máxima por um imóvel analisado;
+      - ``selecao_final``  : 'Representante (manter)' apenas se for
+        ``representante`` na sobreposição interna E ``livre`` frente aos
+        analisados; caso contrário registra o motivo da exclusão
+        ('redundante_interno' ou 'sobrepoe_analisado').
+
+    Conservação: toda linha recebe ``selecao_final``.
+    """
+    from .sobreposicao import sobreposicao_contra_externo
+
+    out = coerentes.copy()
+    if analisados is None or len(analisados) == 0:
+        out["vs_analisado"] = "livre"
+        out["frac_analisado"] = 0.0
+    else:
+        ids = list(out[cfg.col_cod])
+        geoms = list(out.geometry)
+        res = sobreposicao_contra_externo(
+            ids, geoms, list(analisados.geometry), cfg.limiar_vs_analisado,
+        )
+        out["frac_analisado"] = out[cfg.col_cod].map(lambda c: res[c].frac_max)
+        out["vs_analisado"] = out[cfg.col_cod].map(
+            lambda c: "sobrepoe_analisado"
+            if res[c].classe_espacial == "redundante_sobreposto" else "livre"
+        )
+
+    def _selecao(row):
+        if row.get("classe_espacial", "representante") != "representante":
+            return "redundante_interno"
+        if row["vs_analisado"] == "sobrepoe_analisado":
+            return "sobrepoe_analisado"
+        return "Representante (manter)"
+
+    out["selecao_final"] = out.apply(_selecao, axis=1)
     return out
 
 

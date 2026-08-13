@@ -134,6 +134,57 @@ def reclassificar(
     }
 
 
+def sobreposicao_contra_externo(
+    ids: list[Hashable],
+    geometrias: list[BaseGeometry],
+    geometrias_externas: list[BaseGeometry],
+    limiar: float = 0.10,
+) -> dict[Hashable, ResultadoSobreposicao]:
+    """Marca imóveis que se sobrepõem a um conjunto EXTERNO com prioridade.
+
+    Usado no filtro final: os imóveis de trabalho (Em Análise + Aguardando) são
+    testados contra os imóveis já ``Analisado``. O conjunto externo tem
+    PRIORIDADE — nunca é removido; apenas os imóveis de ``ids`` podem ser
+    marcados como ``redundante_sobreposto``.
+
+    Para cada imóvel ``X`` de ``ids``:
+        frac(X) = área(X ∩ Y) / área(X), tomada sobre o Y externo de maior
+        interseção. Se ``frac >= limiar`` -> ``redundante_sobreposto``
+        (pai_cod = None, pois o pai é externo).
+
+    Diferente de :func:`calcular_sobreposicao`, aqui NÃO se exige que o externo
+    seja maior: um imóvel já analisado prevalece independentemente do tamanho,
+    porque representa uma decisão do órgão competente.
+    """
+    ext = [limpar_2d_valido(g) for g in geometrias_externas]
+    ext = [g for g in ext if g is not None]
+    tree = STRtree(ext) if ext else None
+
+    resultado: dict[Hashable, ResultadoSobreposicao] = {}
+    for gid, g in zip(ids, geometrias):
+        gx = limpar_2d_valido(g)
+        if gx is None or tree is None:
+            resultado[gid] = ResultadoSobreposicao(0.0, None, "representante")
+            continue
+        ax = area_geodesica_m2(gx)
+        if ax <= 0:
+            resultado[gid] = ResultadoSobreposicao(0.0, None, "representante")
+            continue
+        best = 0.0
+        for pos in tree.query(gx):
+            gy = ext[int(pos)]
+            if not gx.intersects(gy):
+                continue
+            inter = gx.intersection(gy)
+            ia = area_geodesica_m2(inter) if inter and not inter.is_empty else 0.0
+            frac = ia / ax
+            if frac > best:
+                best = frac
+        classe = "redundante_sobreposto" if best >= limiar else "representante"
+        resultado[gid] = ResultadoSobreposicao(round(best, 4), None, classe)
+    return resultado
+
+
 def _menor_ou_igual(a: Hashable, b: Hashable) -> bool:
     """Comparação determinística para desempate de áreas iguais.
 

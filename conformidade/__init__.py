@@ -29,23 +29,39 @@ from .geometria import area_geodesica_m2, limpar_2d_valido, CRS_TRABALHO
 from .classificacao import (
     ReferenciaINCRA, Limiares, classificar_imovel, CAMPOS_RESULTADO,
 )
-from .sobreposicao import calcular_sobreposicao, reclassificar, ResultadoSobreposicao
+from .sobreposicao import (
+    calcular_sobreposicao, reclassificar, ResultadoSobreposicao,
+    sobreposicao_contra_externo,
+)
 from .subdivisao import subdividir_contido_menor, ParametrosSubdivisao
 from .recorte import filtrar_tematicas
+from .fases import (
+    classificar_fase, eh_fase_trabalho, eh_analisado,
+    ANALISADO, CANCELADO, EM_ANALISE, AGUARDANDO, FASES_TRABALHO,
+)
+from .preparacao import (
+    preparar_estado, ResultadoPreparacao,
+    PLANOS_PADRAO, PLANOS_TEMATICOS_FINAIS,
+)
 from .pipeline import (
     ConfigPipeline, ResultadoNatureza, montar_referencia,
-    classificar_camada_sicar, aplicar_sobreposicao,
+    classificar_camada_sicar, aplicar_sobreposicao, aplicar_filtro_analisados,
 )
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __all__ = [
     "area_geodesica_m2", "limpar_2d_valido", "CRS_TRABALHO",
     "ReferenciaINCRA", "Limiares", "classificar_imovel", "CAMPOS_RESULTADO",
     "calcular_sobreposicao", "reclassificar", "ResultadoSobreposicao",
+    "sobreposicao_contra_externo",
     "subdividir_contido_menor", "ParametrosSubdivisao",
     "filtrar_tematicas",
+    "classificar_fase", "eh_fase_trabalho", "eh_analisado",
+    "ANALISADO", "CANCELADO", "EM_ANALISE", "AGUARDANDO", "FASES_TRABALHO",
+    "preparar_estado", "ResultadoPreparacao",
+    "PLANOS_PADRAO", "PLANOS_TEMATICOS_FINAIS",
     "ConfigPipeline", "ResultadoNatureza", "montar_referencia",
-    "classificar_camada_sicar", "aplicar_sobreposicao",
+    "classificar_camada_sicar", "aplicar_sobreposicao", "aplicar_filtro_analisados",
     "__version__",
 ]

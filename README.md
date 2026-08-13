@@ -14,21 +14,69 @@ processar vários estados de maneira automática e reproduzível.
 
 ## O que o programa faz
 
-A partir das bases de um estado, o programa executa uma sequência de etapas
-(cada uma pode ser ligada/desligada):
+O processo tem **dois comandos**, na ordem natural de trabalho:
 
-1. **Coerência** — classifica cada imóvel do SICAR contra a referência do INCRA,
-   atribuindo a categoria `motivo` (5 classes) e as métricas geométricas.
+**`preparar`** (etapa 0) — parte dos dados brutos baixados do SICAR e separa os
+imóveis pela fase de análise (campo `des_condic`):
+
+- **Cancelado** → descartado (não entra na análise);
+- **Analisado** → guardado num GeoPackage próprio do estado
+  (`<UF>_analisados.gpkg`), junto com todos os nove planos de informação
+  (APPS, RESERVA_LEGAL, etc.), para análises futuras;
+- **Em Análise + Aguardando Análise** → GeoPackage de trabalho
+  (`<UF>_trabalho.gpkg`), que alimenta a análise de conformidade.
+
+**`analisar`** — roda sobre o pacote de trabalho a sequência de etapas (cada uma
+pode ser ligada/desligada com `--ate`):
+
+1. **Coerência** — classifica cada imóvel contra a referência do INCRA,
+   atribuindo `motivo` (5 classes) e as métricas geométricas.
 2. **Subdivisão** — (opcional) refina o `contido_menor` em `grande` / `isolado`
    / `sobreposto`.
-3. **Sobreposição** — (opcional) marca a redundância espacial entre imóveis
-   (`classe_espacial`, `frac_max`, `pai_cod`), para evitar dupla contagem de
-   área.
-4. **Recorte** — (opcional) filtra as feições de APP/RL/AUR dos imóveis
-   coerentes.
+3. **Sobreposição interna** — marca a redundância espacial entre os imóveis de
+   trabalho (`classe_espacial`, `frac_max`, `pai_cod`).
+4. **Filtro final contra Analisados** — remove os representantes que se
+   sobrepõem a imóveis já **Analisado** (que têm prioridade e nunca são
+   removidos). O resultado fica sem sobreposição entre imóveis do SICAR,
+   **independente da fase**. Registra `vs_analisado`, `frac_analisado` e a
+   coluna decisória `selecao_final`.
+5. **Recorte** — para os imóveis `Representante (manter)`, anexa as camadas
+   **APPS, RESERVA_LEGAL e USO_RESTRITO** (filtradas pelo código do imóvel).
 
 A cada etapa, o programa confere a **conservação** (nenhum imóvel perdido ou
 duplicado) e grava um relatório com os parâmetros usados.
+
+---
+
+## Fluxo em um olhar
+
+```
+   Download SICAR (9 planos, shapefile)
+                │
+                ▼
+        ┌───────────────┐
+        │   preparar    │  separa por des_condic
+        └───────┬───────┘
+        ┌───────┴───────────────────────────┐
+        ▼                                     ▼
+  <UF>_analisados.gpkg                <UF>_trabalho.gpkg
+  (Analisado + 9 planos)              (Em Análise + Aguardando)
+        │                                     │
+        │  (usado no filtro final)            ▼
+        │                             ┌───────────────┐
+        │                             │   analisar    │
+        │                             │  coerência    │
+        │                             │  subdivisão   │
+        │                             │  sobrep. int. │
+        └────────────────────────────►  filtro final │
+                                      │  recorte      │
+                                      └───────┬───────┘
+                                              ▼
+                                  conformidade_<UF>_<nat>.gpkg
+                                  (Coerentes com selecao_final +
+                                   APPS/RESERVA_LEGAL/USO_RESTRITO
+                                   dos "Representante (manter)")
+```
 
 ---
 
@@ -76,88 +124,127 @@ conformidade --help
 
 ## Como usar (tutorial)
 
-### Passo 1 — Organize os dados do estado
+O processo tem dois passos: **`preparar`** (uma vez por estado, a partir do
+download) e **`analisar`** (a conformidade em si).
 
-Baixe e deixe numa pasta os arquivos do estado (shapefile ou GeoPackage):
+### Passo 1 — Baixe os dados do estado
 
-- SICAR "Em Análise" e "Aguardando Análise";
-- referência do INCRA da natureza que você quer analisar (**privada** ou
-  **pública**): SIGEF e SNCI;
-- (opcional) as camadas de APP, RL e AUR.
+No portal do SICAR (https://consultapublica.car.gov.br/publico/estados/downloads),
+baixe os planos do estado em shapefile. Você terá pastas com os nomes:
+`AREA_IMOVEL`, `APPS`, `RESERVA_LEGAL`, `USO_RESTRITO`, `AREA_CONSOLIDADA`,
+`AREA_POUSIO`, `HIDROGRAFIA`, `SERVIDAO_ADMINISTRATIVA`, `VEGETACAO_NATIVA`.
 
-> **Importante:** rode uma natureza por vez. Para os **privados**, use
-> `SIGEF_Privado` + `SNCI_Privado`; para os **públicos**, as versões públicas.
-> Ver o porquê em [`docs/metodologia.md`](docs/metodologia.md).
+Separadamente, tenha a referência do INCRA (**SIGEF** e **SNCI**) da natureza
+que vai analisar (privada ou pública).
 
-### Passo 2 — Rode o comando
-
-Exemplo completo (natureza privada, pipeline inteira) — **troque os caminhos
-pelos seus arquivos**:
+### Passo 2 — `preparar`: separe os imóveis por fase
 
 ```bash
-conformidade \
-  --sicar  SICAR_Em_Analise.shp  SICAR_Aguardando_Analise.shp \
-  --sigef  SIGEF_Privado.shp \
-  --snci   SNCI_Privado.shp \
-  --natureza Privado \
-  --tematicas  APP.shp  RL.shp  AUR.shp \
-  --limiar-sobreposicao 0.70 \
-  --uf PA \
-  --saida  resultado_PA/
+conformidade preparar \
+  --area-imovel        AREA_IMOVEL/AREA_IMOVEL.shp \
+  --apps               APPS/APPS.shp \
+  --reserva-legal      RESERVA_LEGAL/RESERVA_LEGAL.shp \
+  --uso-restrito       USO_RESTRITO/USO_RESTRITO.shp \
+  --area-consolidada   AREA_CONSOLIDADA/AREA_CONSOLIDADA.shp \
+  --area-pousio        AREA_POUSIO/AREA_POUSIO.shp \
+  --hidrografia        HIDROGRAFIA/HIDROGRAFIA.shp \
+  --servidao-administrativa SERVIDAO_ADMINISTRATIVA/SERVIDAO_ADMINISTRATIVA.shp \
+  --vegetacao-nativa   VEGETACAO_NATIVA/VEGETACAO_NATIVA.shp \
+  --uf PA --saida preparo_PA/
 ```
 
-Para rodar **só até a coerência** (sem sobreposição nem recorte):
-```bash
-conformidade --sicar SICAR.shp --sigef SIGEF_Privado.shp --snci SNCI_Privado.shp \
-             --natureza Privado --ate coerencia --uf PA --saida resultado_PA/
-```
-
-Para **pular a subdivisão** do `contido_menor`, acrescente `--sem-subdivisao`.
-
-### Passo 3 — Veja os resultados
-
-Na pasta de saída você terá:
+Isso gera, na pasta `preparo_PA/`:
 
 | Arquivo | Conteúdo |
 |---------|----------|
-| `conformidade_PA_Privado.gpkg` | camadas `..._Coerentes` e `..._Incoerentes` |
-| `tematicas_PA_Privado.gpkg` | APP/RL/AUR recortados dos coerentes |
-| `relatorio_PA_Privado.json` | parâmetros, contagens e verificação de conservação |
+| `PA_trabalho.gpkg` | imóveis **Em Análise + Aguardando** (camada `AREA_IMOVEL`) |
+| `PA_analisados.gpkg` | imóveis **Analisado** + todos os nove planos filtrados |
+| `preparacao_PA.json` | contagem por fase |
 
-Abra os GeoPackages no QGIS ou ArcGIS. Os campos principais:
+> Só o `AREA_IMOVEL` é obrigatório. Os demais planos são usados para compor o
+> pacote de analisados; informe ao menos APPS, RESERVA_LEGAL e USO_RESTRITO, que
+> são necessários no recorte final da análise.
+
+### Passo 3 — `analisar`: rode a conformidade
+
+```bash
+conformidade analisar \
+  --sicar       preparo_PA/PA_trabalho.gpkg --sicar-camada AREA_IMOVEL \
+  --sigef       SIGEF_Privado.shp \
+  --snci        SNCI_Privado.shp \
+  --natureza    Privado \
+  --analisados  preparo_PA/PA_analisados.gpkg --analisados-camada AREA_IMOVEL \
+  --apps          APPS/APPS.shp \
+  --reserva-legal RESERVA_LEGAL/RESERVA_LEGAL.shp \
+  --uso-restrito  USO_RESTRITO/USO_RESTRITO.shp \
+  --limiar-sobreposicao 0.10 \
+  --limiar-vs-analisado 0.10 \
+  --uf PA --saida resultado_PA/
+```
+
+Controle de etapas com `--ate`: `coerencia`, `sobreposicao`, `final` ou
+`recorte` (padrão). Para pular a subdivisão do `contido_menor`, acrescente
+`--sem-subdivisao`. O `--analisados` é opcional — sem ele, o filtro final é
+ignorado (todos os representantes seguem).
+
+### Passo 4 — Veja os resultados
+
+Na pasta `resultado_PA/`:
+
+| Arquivo | Conteúdo |
+|---------|----------|
+| `conformidade_PA_Privado.gpkg` | `..._Coerentes`, `..._Incoerentes` e as camadas `APPS`/`RESERVA_LEGAL`/`USO_RESTRITO` dos imóveis a manter |
+| `relatorio_PA_Privado.json` | parâmetros, contagens por etapa e conservação |
+
+Campos principais na camada de coerentes:
 
 - **`motivo`** — a classe de coerência (5 valores);
-- **`classe_espacial`** — `representante` ou `redundante_sobreposto`;
+- **`classe_espacial`** — `representante`/`redundante_sobreposto` (sobreposição interna);
 - **`frac_max`** — cobertura máxima por um imóvel maior (0 a 1);
-- **`tipo_incra`** — natureza da referência (Privado/Publico).
+- **`vs_analisado`** — `livre` ou `sobrepoe_analisado`;
+- **`frac_analisado`** — cobertura máxima por um imóvel Analisado;
+- **`selecao_final`** — **`Representante (manter)`**, `redundante_interno` ou
+  `sobrepoe_analisado`. Este é o campo decisório: os `Representante (manter)`
+  são o conjunto final, sem sobreposição entre si nem com os Analisados.
 
-### Recalibrar o limiar de sobreposição
+### Recalibrar os limiares sem reprocessar
 
-Como o `frac_max` fica gravado em cada imóvel, você pode testar outro corte
-**sem reprocessar**: no QGIS/ArcGIS, filtre por `frac_max >= 0.30` (ou qualquer
-valor). Só é preciso rodar de novo se mudar os parâmetros da *classificação*
-(IoU, containment etc.).
+Como `frac_max` e `frac_analisado` ficam gravados em cada imóvel, você pode
+testar outros cortes filtrando direto no QGIS/ArcGIS
+(`frac_max >= 0.30`, `frac_analisado >= 0.20` etc.), sem rodar de novo. Só é
+preciso reprocessar ao mudar os parâmetros da *classificação* (IoU, containment).
 
 ---
 
 ## Principais opções da linha de comando
 
+**`preparar`**
+
+| Opção | Obrigatório | O que faz |
+|-------|-------------|-----------|
+| `--area-imovel` | sim | plano AREA_IMOVEL (tem o `des_condic`) |
+| `--apps`, `--reserva-legal`, `--uso-restrito`, ... | não | demais planos, para o pacote de analisados |
+| `--uf`, `--saida` | sim | sigla do estado e pasta de saída |
+
+**`analisar`**
+
 | Opção | Padrão | O que faz |
 |-------|--------|-----------|
-| `--sicar` | — | camada(s) do SICAR a classificar (obrigatório) |
+| `--sicar` | — | camada(s) de trabalho (obrigatório) |
 | `--sigef` / `--snci` | — | referência do INCRA |
 | `--natureza` | `Privado` | rótulo da natureza (Privado/Publico) |
-| `--tematicas` | — | camadas APP/RL/AUR para o recorte |
-| `--ate` | `recorte` | executa até esta etapa (`coerencia`/`sobreposicao`/`recorte`) |
+| `--analisados` | — | camada dos imóveis Analisado (filtro final) |
+| `--apps` / `--reserva-legal` / `--uso-restrito` | — | temáticas do recorte final |
+| `--ate` | `recorte` | etapa final (`coerencia`/`sobreposicao`/`final`/`recorte`) |
 | `--sem-subdivisao` | desligado | não subdivide o `contido_menor` |
-| `--limiar-sobreposicao` | `0.70` | corte de redundância espacial |
+| `--limiar-sobreposicao` | `0.10` | corte da sobreposição interna |
+| `--limiar-vs-analisado` | `0.10` | corte do filtro contra Analisados |
 | `--iou-min` | `0.90` | IoU mínimo para `forma_similar` |
 | `--contain-min` | `0.99` | contenção mínima (Ramo A) |
 | `--darea-max` | `0.10` | diferença de área tolerada |
-| `--uf` | `UF` | sigla do estado (nomes dos arquivos) |
-| `--saida` | — | pasta de saída (obrigatório) |
+| `--uf` / `--saida` | — | sigla do estado e pasta de saída (saída obrigatória) |
 
-Lista completa: `conformidade --help`.
+Lista completa: `conformidade preparar --help` e `conformidade analisar --help`.
 
 ---
 
@@ -197,13 +284,15 @@ números. Rode-o antes de processar novos estados.
 ```
 conformidade/            # biblioteca (núcleo reutilizável)
   geometria.py           #   área geodésica GRS80, validação
+  fases.py               #   identificação de fase por des_condic
+  preparacao.py          #   etapa 0: separa por fase, monta os GeoPackages
   classificacao.py       #   coerência (ramos A/B/C, 5 motivos)
   subdivisao.py          #   subdivisão do contido_menor
-  sobreposicao.py        #   filtro de sobreposição espacial
-  recorte.py             #   recorte APP/RL/AUR
+  sobreposicao.py        #   sobreposição interna + filtro contra Analisados
+  recorte.py             #   recorte APPS/RESERVA_LEGAL/USO_RESTRITO
   io_dados.py            #   leitura/escrita, conservação
   pipeline.py            #   orquestração modular
-  cli.py                 #   linha de comando
+  cli.py                 #   linha de comando (preparar / analisar)
 docs/metodologia.md      # documentação científica
 exemplos/                # validação e exemplos
 ```
