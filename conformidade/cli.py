@@ -116,9 +116,12 @@ def _add_analisar(sub):
     p.add_argument("--analisados", default=None, metavar="ARQ",
                    help="Camada dos imóveis Analisado (filtro final). Opcional.")
     p.add_argument("--analisados-camada", default=None, metavar="NOME")
-    p.add_argument("--apps", default=None, metavar="ARQ")
-    p.add_argument("--reserva-legal", default=None, metavar="ARQ")
-    p.add_argument("--uso-restrito", default=None, metavar="ARQ")
+    p.add_argument("--apps", nargs="*", default=None, metavar="ARQ",
+                   help="Camada(s) APPS; aceita vários arquivos (planos fatiados).")
+    p.add_argument("--reserva-legal", nargs="*", default=None, metavar="ARQ",
+                   help="Camada(s) RESERVA_LEGAL; aceita vários arquivos.")
+    p.add_argument("--uso-restrito", nargs="*", default=None, metavar="ARQ",
+                   help="Camada(s) USO_RESTRITO; aceita vários arquivos.")
     p.add_argument("--col-cod", default="cod_imovel")
 
     p.add_argument("--iou-min", type=float, default=0.90)
@@ -241,12 +244,14 @@ def _run_analisar(args) -> int:
                  "USO_RESTRITO": args.uso_restrito}
         n_total = 0
         for nome in PLANOS_TEMATICOS_FINAIS:
-            caminho = temas.get(nome)
-            if not caminho:
+            caminhos = temas.get(nome)
+            if not caminhos:
                 continue
-            gdf = ler_camada(caminho)
-            sel = filtrar_tematicas([gdf], cods, col_cod=args.col_cod,
-                                    rotulos=[nome], atributos_por_cod=attr)
+            # aceita vários arquivos (planos fatiados: APPS_2..APPS_6, etc.)
+            gdfs = [ler_camada(c) for c in caminhos]
+            sel = filtrar_tematicas(gdfs, cods, col_cod=args.col_cod,
+                                    rotulos=[nome] * len(gdfs),
+                                    atributos_por_cod=attr)
             if len(sel) > 0:
                 escrever_camada(sel, gpkg, nome)
                 n_total += len(sel)
