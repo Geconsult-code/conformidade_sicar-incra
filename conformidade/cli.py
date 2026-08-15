@@ -132,8 +132,9 @@ def _add_analisar(sub):
     p.add_argument("--piso-sobrep", type=float, default=0.01)
     p.add_argument("--limiar-sobreposicao", type=float, default=0.10,
                    help="Limiar da sobreposição interna (Em/Aguardando).")
-    p.add_argument("--limiar-vs-analisado", type=float, default=0.10,
-                   help="Limiar do filtro final contra os imóveis Analisado.")
+    p.add_argument("--limiar-vs-analisado", type=float, default=0.30,
+                   help="Limiar do filtro final contra os imóveis Analisado "
+                        "(0,30 = calibrado no Pará).")
 
     p.add_argument("--ate", choices=["coerencia", "sobreposicao", "final", "recorte"],
                    default="recorte",

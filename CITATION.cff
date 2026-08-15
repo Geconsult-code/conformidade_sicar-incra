@@ -12,7 +12,7 @@ authors:
   - given-names: "Maurício"
     family-names: "Braga Meira"
     affiliation: "Geoconsult Ltda. (Consultoria especializada em geoinformação)"
-version: "0.2.0"
+version: "0.3.0"
 date-released: "2026-08-10"
 license: MIT
 repository-code: "https://github.com/Geconsult-code/Conformidade_sicar-incra"

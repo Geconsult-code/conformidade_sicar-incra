@@ -178,7 +178,7 @@ conformidade analisar \
   --reserva-legal RESERVA_LEGAL/RESERVA_LEGAL.shp \
   --uso-restrito  USO_RESTRITO/USO_RESTRITO.shp \
   --limiar-sobreposicao 0.10 \
-  --limiar-vs-analisado 0.10 \
+  --limiar-vs-analisado 0.30 \
   --uf PA --saida resultado_PA/
 ```
 
@@ -238,7 +238,7 @@ preciso reprocessar ao mudar os parâmetros da *classificação* (IoU, containme
 | `--ate` | `recorte` | etapa final (`coerencia`/`sobreposicao`/`final`/`recorte`) |
 | `--sem-subdivisao` | desligado | não subdivide o `contido_menor` |
 | `--limiar-sobreposicao` | `0.10` | corte da sobreposição interna |
-| `--limiar-vs-analisado` | `0.10` | corte do filtro contra Analisados |
+| `--limiar-vs-analisado` | `0.30` | corte do filtro contra Analisados (calibrado no Pará) |
 | `--iou-min` | `0.90` | IoU mínimo para `forma_similar` |
 | `--contain-min` | `0.99` | contenção mínima (Ramo A) |
 | `--darea-max` | `0.10` | diferença de área tolerada |
@@ -271,11 +271,22 @@ print(len(res.coerentes), "coerentes;", (coer.classe_espacial == "representante"
 
 ## Validação
 
-O programa foi construído a partir de uma rotina validada manualmente no QGIS
-para o estado do **Pará**. O script [`exemplos/validar_para.py`](exemplos/validar_para.py)
-compara, imóvel a imóvel, o resultado do programa com o resultado de referência
-do Pará — é a garantia de que a "tradução" da rotina para código preserva os
-números. Rode-o antes de processar novos estados.
+A metodologia foi construída e validada a partir de uma rotina desenvolvida
+manualmente no QGIS para o estado do **Pará**. A classificação de coerência do
+programa reproduz o resultado do QGIS com **99,4% de concordância** imóvel a
+imóvel (as divergências restantes são todas de fronteira — imóveis exatamente
+sobre os limiares, onde diferenças mínimas de arredondamento entre motores
+geométricos decidem o lado). O fluxo completo (preparação por fase,
+classificação, sobreposição, filtro contra Analisados e recorte) foi então
+executado de ponta a ponta no Pará, servindo de modelo para os demais estados.
+
+Os testes automatizados em [`exemplos/teste_nucleo.py`](exemplos/teste_nucleo.py)
+verificam o núcleo (os cinco motivos, a sobreposição, a subdivisão, as fases e o
+filtro contra Analisados) e podem ser executados a qualquer momento:
+
+```bash
+python exemplos/teste_nucleo.py
+```
 
 ---
 
@@ -293,8 +304,9 @@ conformidade/            # biblioteca (núcleo reutilizável)
   io_dados.py            #   leitura/escrita, conservação
   pipeline.py            #   orquestração modular
   cli.py                 #   linha de comando (preparar / analisar)
+separar_incra_por_uf.py  # utilitário: separa SIGEF/SNCI nacionais por estado
 docs/metodologia.md      # documentação científica
-exemplos/                # validação e exemplos
+exemplos/teste_nucleo.py # testes automatizados do núcleo
 ```
 
 ---

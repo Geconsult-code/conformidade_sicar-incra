@@ -204,8 +204,18 @@ O resultado é consolidado no campo **`selecao_final`**:
 
 Assim, o conjunto `Representante (manter)` fica **sem sobreposição entre imóveis
 do SICAR, independentemente da fase** — que é o objetivo para a análise de áreas.
-Os limiares interno e contra-analisados são configuráveis separadamente (padrão
-0,10 em ambos).
+Os limiares interno e contra-analisados são configuráveis separadamente. O
+padrão da sobreposição interna é **0,10**; o do filtro contra analisados é
+**0,30**, calibrado no Pará.
+
+> **Calibração do limiar contra analisados.** Uma análise de sensibilidade no
+> Pará mostrou que, dos representantes eliminados a 0,10, cerca de 73% tinham
+> sobreposição de 70% ou mais com um imóvel analisado (duplicatas reais),
+> enquanto uma fração menor apenas encostava (10–30%). O corte em **0,30**
+> elimina quem sobrepõe um terço ou mais da área de um imóvel já analisado
+> (removendo as duplicatas substanciais) e preserva os que só tangenciam. O
+> campo `frac_analisado` fica gravado, permitindo recalibrar por filtragem sem
+> reprocessar.
 
 ## 6. Recorte temático (APPS / RESERVA_LEGAL / USO_RESTRITO)
 

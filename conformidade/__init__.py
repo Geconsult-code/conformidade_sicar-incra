@@ -48,7 +48,7 @@ from .pipeline import (
     classificar_camada_sicar, aplicar_sobreposicao, aplicar_filtro_analisados,
 )
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 __all__ = [
     "area_geodesica_m2", "limpar_2d_valido", "CRS_TRABALHO",

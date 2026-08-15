@@ -43,7 +43,9 @@ class ConfigPipeline:
     calcular_sobreposicao: bool = True
     limiar_sobreposicao: float = 0.70
     # Limiar do filtro FINAL contra os imóveis já "Analisado" (etapa final).
-    limiar_vs_analisado: float = 0.10
+    # 0,30 = calibrado no Pará: elimina imóveis que sobrepõem 1/3 ou mais de um
+    # imóvel analisado (duplicatas reais), preservando os que só encostam.
+    limiar_vs_analisado: float = 0.30
 
 
 @dataclass
