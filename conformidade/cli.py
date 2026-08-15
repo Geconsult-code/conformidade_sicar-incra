@@ -249,8 +249,17 @@ def _run_analisar(args) -> int:
                 continue
             # aceita vários arquivos (planos fatiados: APPS_2..APPS_6, etc.)
             gdfs = [ler_camada(c) for c in caminhos]
-            sel = filtrar_tematicas(gdfs, cods, col_cod=args.col_cod,
-                                    rotulos=[nome] * len(gdfs),
+            # salvaguarda: descarta feições temáticas em fase Cancelado
+            # (o mesmo cod_imovel pode ter linhas canceladas por duplicidade)
+            from .fases import classificar_fase, CANCELADO
+            gdfs_limpos = []
+            for g in gdfs:
+                if "des_condic" in g.columns:
+                    fase_feicao = g["des_condic"].map(classificar_fase)
+                    g = g[fase_feicao != CANCELADO]
+                gdfs_limpos.append(g)
+            sel = filtrar_tematicas(gdfs_limpos, cods, col_cod=args.col_cod,
+                                    rotulos=[nome] * len(gdfs_limpos),
                                     atributos_por_cod=attr)
             if len(sel) > 0:
                 escrever_camada(sel, gpkg, nome)

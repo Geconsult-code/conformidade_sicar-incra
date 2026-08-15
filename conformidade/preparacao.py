@@ -114,6 +114,11 @@ def preparar_estado(
         )
     fases = imoveis[col_fase].map(classificar_fase)
 
+    # IMPORTANTE: filtramos pela FASE DE CADA LINHA, não pelo conjunto de
+    # códigos. O SICAR pode ter o mesmo cod_imovel em linhas de fases
+    # diferentes (ex.: "Cancelado por duplicidade" — que É, por definição, um
+    # cadastro duplicado). Filtrar por código traria a linha cancelada junto
+    # com a válida. Filtrar por fase da linha descarta cada linha cancelada.
     def cods_da_fase(rotulo):
         return set(imoveis.loc[fases == rotulo, col_cod])
 
@@ -121,16 +126,20 @@ def preparar_estado(
     cods_em = cods_da_fase(EM_ANALISE)
     cods_agu = cods_da_fase(AGUARDANDO)
     cods_cancel = cods_da_fase(CANCELADO)
-    cods_trabalho = cods_em | cods_agu
 
-    # 2) Pacote ANALISADOS: AREA_IMOVEL(analisados) + todos os planos filtrados.
+    # Máscaras por fase da LINHA (não por código).
+    mask_analisado = fases == ANALISADO
+    mask_trabalho = fases.isin([EM_ANALISE, AGUARDANDO])
+
+    # 2) Pacote ANALISADOS: AREA_IMOVEL(linhas analisadas) + planos filtrados
+    #    pelos códigos analisados.
     gpkg_ana = os.path.join(saida_dir, f"{uf}_analisados.gpkg")
     _gravar_pacote(planos, cods_analisado, gpkg_ana, col_cod,
-                   imoveis_ja_lidos=imoveis[imoveis[col_cod].isin(cods_analisado)])
+                   imoveis_ja_lidos=imoveis[mask_analisado])
 
-    # 3) Pacote TRABALHO: apenas AREA_IMOVEL(em análise + aguardando).
+    # 3) Pacote TRABALHO: apenas as LINHAS em análise + aguardando.
     gpkg_tra = os.path.join(saida_dir, f"{uf}_trabalho.gpkg")
-    trabalho = imoveis[imoveis[col_cod].isin(cods_trabalho)].copy()
+    trabalho = imoveis[mask_trabalho].copy()
     # marca a fase canônica para uso posterior
     trabalho["fase"] = trabalho[col_fase].map(classificar_fase)
     escrever_camada(trabalho, gpkg_tra, "AREA_IMOVEL")
