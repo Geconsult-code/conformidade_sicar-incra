@@ -42,7 +42,6 @@ PASTA_INCRA = r"C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\INCRA"
 # Estados a PULAR (já processados). Use as siglas.
 PULAR = ["PA"]
 # Para rodar SÓ alguns estados, liste as siglas aqui (senão deixe vazio = todos).
-SOMENTE_ESTES: list[str] = []
 
 # Apagar os .shp descompactados ao terminar cada estado (poupa espaço)?
 APAGAR_SHP_AO_FIM = True
