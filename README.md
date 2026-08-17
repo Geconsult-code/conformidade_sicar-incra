@@ -248,6 +248,26 @@ Lista completa: `conformidade preparar --help` e `conformidade analisar --help`.
 
 ---
 
+## Processamento em lote (Brasil inteiro)
+
+Para rodar todos os estados de uma vez — e reprocessar quando novos dados do
+SICAR/INCRA saírem — use o script [`processar_lote.py`](processar_lote.py). Ele
+varre a pasta dos estados, descompacta os planos, junta pedaços fatiados,
+localiza o INCRA de cada UF e roda `preparar` + `analisar`, gravando o resultado
+em `_saida_<UF>` dentro de cada estado.
+
+```bash
+python processar_lote.py
+```
+
+Antes de rodar, ajuste os caminhos no topo do script (`PASTA_SICAR`,
+`PASTA_INCRA`). Por padrão processa **todos** os estados encontrados; para
+refazer só alguns, preencha `SOMENTE_ESTES = ["SP", "TO"]`. Se um estado falhar,
+o script segue para o próximo e lista as falhas no fim. O INCRA por UF pode ser
+gerado das bases nacionais com [`separar_incra_por_uf.py`](separar_incra_por_uf.py).
+
+---
+
 ## Uso como biblioteca (para quem programa)
 
 Todo o núcleo é importável:
@@ -305,6 +325,7 @@ conformidade/            # biblioteca (núcleo reutilizável)
   pipeline.py            #   orquestração modular
   cli.py                 #   linha de comando (preparar / analisar)
 separar_incra_por_uf.py  # utilitário: separa SIGEF/SNCI nacionais por estado
+processar_lote.py        # processa todos os estados de uma vez (atualização)
 docs/metodologia.md      # documentação científica
 exemplos/teste_nucleo.py # testes automatizados do núcleo
 ```

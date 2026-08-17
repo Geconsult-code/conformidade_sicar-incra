@@ -1,5 +1,9 @@
-"""
-processar_lote.py — processa vários estados do Brasil em sequência.
+r"""
+processar_lote.py — processa TODOS os estados do Brasil em sequência.
+
+Ferramenta de atualização: sempre que novos dados do SICAR e/ou INCRA forem
+disponibilizados, basta atualizar as pastas de origem e rodar este script para
+reprocessar o país inteiro (ou os estados que você escolher).
 
 Para cada estado dentro de ``PASTA_SICAR``, o script:
   1. descompacta os .zip dos planos usados (AREA_IMOVEL, APPS, RESERVA_LEGAL,
@@ -15,10 +19,21 @@ lista os que deram certo e os que falharam.
 
 COMO USAR
 ---------
-1. Confira os caminhos na seção CONFIG.
-2. Com o ambiente 'geo' ativo:
+1. Coloque os dados nas pastas de origem (ver CONFIG): o SICAR bruto de cada
+   estado em PASTA_SICAR\<ESTADO>\ (com os .zip dos planos), e o INCRA por UF
+   (SIGEF_Privado_<UF>.shp / SNCI_Privado_<UF>.shp) em PASTA_INCRA — este último
+   pode ser gerado das bases nacionais com o utilitário separar_incra_por_uf.py.
+2. Confira os caminhos na seção CONFIG.
+3. Com o ambiente 'geo' ativo:
        python processar_lote.py
-   (Para processar só alguns estados, preencha SOMENTE_ESTES com as siglas.)
+
+Por padrão processa TODOS os estados encontrados. Para refazer só alguns,
+preencha SOMENTE_ESTES (ex.: ["SP", "TO"]). Para pular alguns, use PULAR.
+Reprocessar sobrescreve os resultados anteriores em cada _saida_<UF>.
+
+NOTA: zips muito grandes do SICAR podem, ocasionalmente, não abrir pelo Python
+(formato ZIP64 ou download corrompido). Nesse caso, extraia o .zip do plano à
+mão na respectiva subpasta — o script detecta os .shp já descompactados e segue.
 """
 
 from __future__ import annotations
@@ -39,9 +54,11 @@ import geopandas as gpd
 PASTA_SICAR = r"C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026"
 PASTA_INCRA = r"C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\INCRA"
 
-# Estados a PULAR (já processados). Use as siglas.
-PULAR = ["PA"]
+# Estados a PULAR nesta execução (opcional). Deixe vazio para processar TODOS.
+# Útil quando você já reprocessou alguns e quer refazer só os demais.
+PULAR: list[str] = []
 # Para rodar SÓ alguns estados, liste as siglas aqui (senão deixe vazio = todos).
+SOMENTE_ESTES: list[str] = []
 
 # Apagar os .shp descompactados ao terminar cada estado (poupa espaço)?
 APAGAR_SHP_AO_FIM = True
