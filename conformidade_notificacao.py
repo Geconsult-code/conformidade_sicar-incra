@@ -47,7 +47,7 @@ PASTA_BASE = r"C:\Users\User\Dropbox\#CONSULTANCY\PLANAVEG\GEODATABASE\INCRA-CAR
 PASTA_INCRA = r"C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\INCRA"
 
 # Deixe vazio para TODOS os estados; ou liste siglas (ex.: ["AC"]) para validar.
-SOMENTE_ESTES: list[str] = ["AC"]
+SOMENTE_ESTES: list[str] = []
 
 # Texto que identifica a fase-alvo (casado de forma tolerante a acento/caixa).
 # "Analisado, aguardando atendimento a notificacao".
