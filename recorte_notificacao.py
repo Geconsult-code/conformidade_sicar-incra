@@ -44,7 +44,7 @@ PASTA_BASE = r"C:\Users\User\Dropbox\#CONSULTANCY\PLANAVEG\GEODATABASE\INCRA-CAR
 PASTA_SICAR = r"C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026"
 
 # Deixe vazio para TODOS; ou liste siglas (ex.: ["AC"]) para validar.
-SOMENTE_ESTES: list[str] = []
+SOMENTE_ESTES: list[str] = ["SP"]
 
 # Apagar os .shp descompactados ao terminar cada estado (poupa espaço)?
 APAGAR_SHP_AO_FIM = True
