@@ -73,7 +73,7 @@ FILES_TPL = [
 ]
 
 # --- ajuste aqui conforme a rodada ---
-SOMENTE_ESTES = ["AC"]   # 1a rodada: so AC, pra validar. Depois trocar p/ []
+SOMENTE_ESTES = []       # AC ja validado (9,7s, 4 arquivos, 9 layers, ok) - lote completo agora
 PULAR = []
 REFAZER = []              # UFs para forcar reprocessamento mesmo com JSON existente
 # --------------------------------------
