@@ -73,9 +73,9 @@ FILES_TPL = [
 ]
 
 # --- ajuste aqui conforme a rodada ---
-SOMENTE_ESTES = []       # AC ja validado (9,7s, 4 arquivos, 9 layers, ok) - lote completo agora
+SOMENTE_ESTES = ["AM"]   # reprocessar so o AM (2 layers falharam por geometria patologica - ja corrigido)
 PULAR = []
-REFAZER = []              # UFs para forcar reprocessamento mesmo com JSON existente
+REFAZER = ["AM"]          # forca regravar o AM mesmo com JSON existente
 # --------------------------------------
 
 HEARTBEAT_INTERVALO_S = 300
@@ -140,17 +140,46 @@ def analisar_layer(gdf, categorizar=None):
 
     sub = gdf.loc[~vazio_mask].copy()
     n_invalid = 0
+    n_descartadas_reparo = 0
     if len(sub) > 0:
         sub_arr = np.asarray(sub.geometry.values, dtype=object)
         invalid_mask = ~shapely.is_valid(sub_arr)
         n_invalid = int(invalid_mask.sum())
         if n_invalid > 0:
             fixed = sub_arr.copy()
-            fixed[invalid_mask] = shapely.make_valid(sub_arr[invalid_mask])
+            try:
+                # caminho rapido: make_valid vetorizado no lote inteiro de invalidas
+                fixed[invalid_mask] = shapely.make_valid(sub_arr[invalid_mask])
+            except Exception:
+                # fallback resiliente geom-a-geom (mesmo padrao do cruzar_vegsec.py,
+                # criado pro caso patologico do AM: make_valid pode lancar
+                # IllegalArgumentException/mixed-dimension em certas geometrias)
+                idx_invalid = np.where(invalid_mask)[0]
+                for i in idx_invalid:
+                    g = sub_arr[i]
+                    novo = None
+                    try:
+                        novo = shapely.make_valid(g)
+                    except Exception:
+                        try:
+                            novo = g.buffer(0)
+                        except Exception:
+                            novo = None
+                    if novo is None or novo.is_empty:
+                        n_descartadas_reparo += 1
+                        fixed[i] = None
+                    else:
+                        fixed[i] = novo
             sub["geometry"] = fixed
+            if n_descartadas_reparo > 0:
+                descarte_mask = np.array([g is None for g in fixed])
+                sub = sub.loc[~descarte_mask].copy()
 
-        sub["_area_ha"] = area_ha_equal_area(sub)
-        area_total = float(sub["_area_ha"].sum())
+        if len(sub) > 0:
+            sub["_area_ha"] = area_ha_equal_area(sub)
+            area_total = float(sub["_area_ha"].sum())
+        else:
+            area_total = 0.0
     else:
         area_total = 0.0
 
@@ -158,6 +187,7 @@ def analisar_layer(gdf, categorizar=None):
         "epsg": epsg,
         "num_poligonos": int(n_total),
         "num_geometrias_invalidas": n_invalid,
+        "num_geometrias_descartadas_no_reparo": n_descartadas_reparo,
         "num_sem_geometria": n_vazio,
         "area_total_ha": round(area_total, 4),
     }
