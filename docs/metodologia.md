@@ -283,6 +283,14 @@ O critério de seleção depende do bucket:
 - **Analisados** e **Não Analisados** — recorte só para os imóveis
   `Representante (manter)` (seção 5.5).
 
+Para Analisados e Não Analisados, além das três camadas temáticas, o próprio
+limite (a geometria de imóvel, não a temática) do conjunto `Representante
+(manter)` é persistido num arquivo à parte
+(`<UF>_CAR_Imoveis_Selecionados_<Categoria>.gpkg`) — útil como camada de
+referência para outras análises que precisem só do polígono do imóvel
+selecionado, sem abrir o arquivo de classificação completo (que também traz
+os incoerentes e os redundantes).
+
 > As demais camadas (AREA_CONSOLIDADA, HIDROGRAFIA etc.) não entram nesta análise
 > de conformidade, mas ficam preservadas no pacote `<UF>_analisados.gpkg` da
 > etapa 0 para usos posteriores.

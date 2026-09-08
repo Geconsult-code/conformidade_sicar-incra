@@ -69,7 +69,7 @@ feito):
 | 1 | [`1_processar_dados_incra.py`](1_processar_dados_incra.py) | Separa as bases nacionais do INCRA (SIGEF/SNCI) em um arquivo por UF. |
 | 2 | [`2_processar_dados_sicar.py`](2_processar_dados_sicar.py) | Descompacta o SICAR bruto (AREA_IMOVEL) de cada estado e roda `conformidade preparar`, separando por fase (`<UF>_analisados.gpkg` / `<UF>_trabalho.gpkg`). |
 | 3 | [`3_categorizar_dados_sicar.py`](3_categorizar_dados_sicar.py) | Separa os imóveis em **Habilitados**, **Analisados** (com pendência de notificação) e **Não Analisados**, por `des_condic` exato (ver tabela abaixo). |
-| 4 | [`4_analise_conformidade.py`](4_analise_conformidade.py) | Roda `conformidade analisar` (coerência + sobreposição + filtro final, sem recorte) para os buckets Analisados e Não Analisados. |
+| 4 | [`4_analise_conformidade.py`](4_analise_conformidade.py) | Roda `conformidade analisar` (coerência + sobreposição + filtro final, sem recorte) para os buckets Analisados e Não Analisados; grava também o limite dos imóveis "Representante (manter)" num arquivo à parte. |
 | 5 | [`5_extracao_APP_RL_AUR.py`](5_extracao_APP_RL_AUR.py) | Extrai APP/RL/AUR do SICAR bruto: para **todos** os imóveis Habilitados, e só para os **"Representante (manter)"** de Analisados/Não Analisados. |
 | 6 | [`6_validacao_resultados.py`](6_validacao_resultados.py) | Relatório de consistência (geometrias inválidas, áreas por UF/categoria) + correção in-place das geometrias inválidas encontradas. |
 
@@ -99,12 +99,14 @@ nomes já usado no projeto (prefixo `CAR_<UF>_...` nas camadas):
 
 <UF>_Imoveis_Privados_Analisados.gpkg        CAR_<UF>_Imoveis_Analisados
 <UF>_Conformidade_Imoveis_Analisados.gpkg    CAR_<UF>_Imoveis_Analisados_coerentes / _incoerentes
+<UF>_CAR_Imoveis_Selecionados_Analisados.gpkg  CAR_<UF>_Imoveis_Selecionados_Analisados (limite dos "manter")
                                               CAR_<UF>_APP_Selecionados_Analisados (dos "manter")
                                               CAR_<UF>_RL_Selecionados_Analisados
                                               CAR_<UF>_AUR_Selecionados_Analisados
 
 <UF>_Imoveis_Privados_Nao_Analisados.gpkg    CAR_<UF>_Imoveis_Nao_Analisados
 <UF>_Conformidade_Imoveis_Nao_Analisados.gpkg  CAR_<UF>_Imoveis_Nao_Analisados_coerentes / _incoerentes
+<UF>_CAR_Imoveis_Selecionados_Nao_Analisados.gpkg  CAR_<UF>_Imoveis_Selecionados_Nao_Analisados (limite dos "manter")
                                               CAR_<UF>_APP_Selecionados_Nao_Analisados (dos "manter")
                                               CAR_<UF>_RL_Selecionados_Nao_Analisados
                                               CAR_<UF>_AUR_Selecionados_Nao_Analisados
@@ -113,7 +115,15 @@ nomes já usado no projeto (prefixo `CAR_<UF>_...` nas camadas):
 Ou seja: cada uma das três categorias (Habilitados, Analisados, Não
 Analisados) recebe suas próprias três camadas temáticas
 (`APP`/`RL`/`AUR`_Selecionados_`<Categoria>`) — nove camadas temáticas no
-total por UF, geradas pelo script 5 (`5_extracao_APP_RL_AUR.py`).
+total por UF, geradas pelo script 5 (`5_extracao_APP_RL_AUR.py`). Para
+Analisados e Não Analisados, o script 4 grava ainda o limite (boundary) dos
+imóveis "Representante (manter)" num arquivo à parte
+(`<UF>_CAR_Imoveis_Selecionados_<Categoria>.gpkg`) — o mesmo conjunto de
+imóveis usado pelo script 5 para o recorte temático, aqui disponível também
+como camada de imóveis (sem as temáticas anexadas). Habilitados não tem
+esse arquivo porque já não passa pelo filtro "manter": todos os imóveis de
+`<UF>_Imoveis_Privados_Habilitados.gpkg` já são, por definição, o conjunto
+selecionado.
 
 ### Como rodar
 

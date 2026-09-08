@@ -69,6 +69,8 @@ FILES_TPL = [
     "{uf}_Imoveis_Privados_Outros_Analisado.gpkg",   # auditoria do script 3 (pode não existir)
     "{uf}_Conformidade_Imoveis_Analisados.gpkg",
     "{uf}_Conformidade_Imoveis_Nao_Analisados.gpkg",
+    "{uf}_CAR_Imoveis_Selecionados_Analisados.gpkg",
+    "{uf}_CAR_Imoveis_Selecionados_Nao_Analisados.gpkg",
 ]
 
 # --- ajuste aqui conforme a rodada ---

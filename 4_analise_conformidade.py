@@ -31,7 +31,11 @@ Para cada estado (pasta dados_saída_<UF>\<UF>_geopackage em PASTA_ANALISE):
   4. aplica sobreposição interna + filtro contra a referência de prioridade;
   5. grava <UF>_Conformidade_Imoveis_<Categoria>.gpkg, com as camadas
      CAR_<UF>_Imoveis_<Categoria>_coerentes e
-     CAR_<UF>_Imoveis_<Categoria>_incoerentes.
+     CAR_<UF>_Imoveis_<Categoria>_incoerentes;
+  6. grava, num arquivo à parte, <UF>_CAR_Imoveis_Selecionados_<Categoria>.gpkg
+     (camada CAR_<UF>_Imoveis_Selecionados_<Categoria>) só com o limite dos
+     imóveis "Representante (manter)" — o mesmo conjunto que o script 5 usa
+     para extrair APP/RL/AUR, aqui persistido como camada de imóveis.
 
 COMO USAR
 ---------
@@ -64,6 +68,7 @@ SOMENTE_ESTES: list[str] = []
 
 NATUREZA = "Privado"
 CATEGORIAS = ["Analisados", "Nao_Analisados"]  # buckets classificados aqui
+SEL_MANTER = "Representante (manter)"
 # =====================================================================
 
 UFS = [
@@ -138,10 +143,21 @@ def processar_uf_categoria(uf: str, categoria: str) -> dict:
     escrever_camada(coer, saida, f"CAR_{uf}_Imoveis_{categoria}_coerentes")
     escrever_camada(res.incoerentes, saida, f"CAR_{uf}_Imoveis_{categoria}_incoerentes")
 
-    manter = int((coer["selecao_final"] == "Representante (manter)").sum())
+    # limite (boundary) dos imóveis selecionados como "Representante (manter)",
+    # num arquivo próprio — é o mesmo conjunto de cod_imovel que o script 5
+    # usa para extrair APP/RL/AUR, mas aqui persistido como camada de imóveis.
+    manter_gdf = coer[coer["selecao_final"] == SEL_MANTER]
+    saida_selecionados = os.path.join(pasta_gpkg, f"{uf}_CAR_Imoveis_Selecionados_{categoria}.gpkg")
+    if os.path.exists(saida_selecionados):
+        os.remove(saida_selecionados)
+    if len(manter_gdf) > 0:
+        escrever_camada(manter_gdf, saida_selecionados,
+                        f"CAR_{uf}_Imoveis_Selecionados_{categoria}")
+
+    manter = int(len(manter_gdf))
     return {"uf": uf, "categoria": categoria, "universo": len(universo),
             "coerentes": len(res.coerentes), "incoerentes": len(res.incoerentes),
-            "manter": manter, "saida": saida}
+            "manter": manter, "saida": saida, "saida_selecionados": saida_selecionados}
 
 
 def main() -> int:
