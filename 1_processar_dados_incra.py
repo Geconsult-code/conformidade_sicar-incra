@@ -1,5 +1,8 @@
 """
-separar_incra_por_uf.py — separa SIGEF e SNCI (Brasil) em um arquivo por estado.
+1_processar_dados_incra.py — separa SIGEF e SNCI (Brasil) em um arquivo por estado.
+
+(Renomeado de separar_incra_por_uf.py — 1o passo do workflow numerado do
+repositorio, sem mudanca de logica. Ver docs/metodologia.md.)
 
 A partir de UMA camada do SIGEF (Brasil todo) e UMA do SNCI (Brasil todo), este
 script gera, para cada UF, os arquivos:
@@ -15,7 +18,7 @@ COMO USAR
 1. Preencha os TRÊS caminhos na seção CONFIG abaixo (SIGEF, SNCI, pasta destino).
 2. Com o ambiente 'geo' ativo, rode:
 
-       python separar_incra_por_uf.py
+       python 1_processar_dados_incra.py
 
 O script tenta descobrir sozinho a coluna que identifica o estado (sigla UF ou
 código IBGE). Se não conseguir, ele lista as colunas disponíveis e para, para

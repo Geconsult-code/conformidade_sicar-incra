@@ -1,35 +1,52 @@
 r"""
-processar_lote.py — processa TODOS os estados do Brasil em sequência.
+2_processar_dados_sicar.py — processa TODOS os estados do Brasil em sequência
+(etapa "preparar": separa cada imóvel do SICAR bruto por fase de análise).
 
-Ferramenta de atualização: sempre que novos dados do SICAR e/ou INCRA forem
-disponibilizados, basta atualizar as pastas de origem e rodar este script para
+(Adaptado de processar_lote.py — 2o passo do workflow numerado do
+repositório. MUDANÇA DE ESCOPO em relação ao processar_lote.py original:
+este script agora faz SÓ a preparação (descompacta AREA_IMOVEL, junta os
+pedaços fatiados, roda ``conformidade preparar``). A classificação de
+coerência SICAR × INCRA (antigo ``conformidade analisar``) saiu daqui —
+agora roda de forma genérica para os buckets Analisados/Não Analisados no
+script 4_analise_conformidade.py, depois da categorização do script
+3_categorizar_dados_sicar.py. Por isso este script também NÃO descompacta
+mais os planos temáticos (APPS/RESERVA_LEGAL/USO_RESTRITO) — isso passou
+para o script 5_extracao_APP_RL_AUR.py, que já os busca direto do SICAR
+bruto quando precisa.
+
+Também muda o DESTINO da saída: antes ia para uma subpasta ``_saida_<UF>``
+dentro da própria pasta do estado no SICAR bruto; agora vai para
+Analise_Conformidade\dados_saída_<UF>\<UF>_geopackage (mesma estrutura que
+o script 6_validacao_resultados.py já espera), com os arquivos temporários
+descompactados em Analise_Conformidade\dados_saída_<UF>\<UF>_shapefile.
+
+Ferramenta de atualização: sempre que novos dados do SICAR forem
+disponibilizados, basta atualizar PASTA_SICAR e rodar este script para
 reprocessar o país inteiro (ou os estados que você escolher).
 
 Para cada estado dentro de ``PASTA_SICAR``, o script:
-  1. descompacta os .zip dos planos usados (AREA_IMOVEL, APPS, RESERVA_LEGAL,
-     USO_RESTRITO), pulando os que já estiverem descompactados;
-  2. junta os pedaços fatiados (AREA_IMOVEL_1..N, APPS_1..N, ...);
-  3. localiza o INCRA privado do estado (SIGEF_Privado_<UF>, SNCI_Privado_<UF>);
-  4. roda ``conformidade preparar`` e ``conformidade analisar`` (limiar 0,30 já
-     é o padrão), gravando o resultado numa subpasta ``_saida_<UF>`` do estado;
-  5. opcionalmente apaga os .shp descompactados para poupar espaço.
+  1. descompacta o .zip do plano AREA_IMOVEL, pulando se já estiver
+     descompactado;
+  2. junta os pedaços fatiados (AREA_IMOVEL_1..N);
+  3. roda ``conformidade preparar``, gravando <UF>_analisados.gpkg (fase
+     Analisado, todas as derivações) e <UF>_trabalho.gpkg (Em Análise +
+     Aguardando) na pasta <UF>_geopackage;
+  4. opcionalmente apaga o .shp descompactado para poupar espaço.
 
 Se um estado falhar, o script anota o erro e SEGUE para o próximo; ao final
 lista os que deram certo e os que falharam.
 
 COMO USAR
 ---------
-1. Coloque os dados nas pastas de origem (ver CONFIG): o SICAR bruto de cada
-   estado em PASTA_SICAR\<ESTADO>\ (com os .zip dos planos), e o INCRA por UF
-   (SIGEF_Privado_<UF>.shp / SNCI_Privado_<UF>.shp) em PASTA_INCRA — este último
-   pode ser gerado das bases nacionais com o utilitário separar_incra_por_uf.py.
+1. Coloque o SICAR bruto de cada estado em PASTA_SICAR\<ESTADO>\ (com os
+   .zip dos planos).
 2. Confira os caminhos na seção CONFIG.
 3. Com o ambiente 'geo' ativo:
-       python processar_lote.py
+       python 2_processar_dados_sicar.py
 
 Por padrão processa TODOS os estados encontrados. Para refazer só alguns,
 preencha SOMENTE_ESTES (ex.: ["SP", "TO"]). Para pular alguns, use PULAR.
-Reprocessar sobrescreve os resultados anteriores em cada _saida_<UF>.
+Reprocessar sobrescreve os resultados anteriores em cada <UF>_geopackage.
 
 NOTA: zips muito grandes do SICAR podem, ocasionalmente, não abrir pelo Python
 (formato ZIP64 ou download corrompido). Nesse caso, extraia o .zip do plano à
@@ -41,35 +58,27 @@ from __future__ import annotations
 import os
 import sys
 import glob
-import shutil
 import zipfile
 import subprocess
 import unicodedata
-import tempfile
 from datetime import datetime
 
 import geopandas as gpd
 
 # =============================== CONFIG ===============================
 PASTA_SICAR = r"C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026"
-PASTA_INCRA = r"C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\INCRA"
+PASTA_ANALISE = r"C:\Users\User\Dropbox\#CONSULTANCY\PLANAVEG\GEODATABASE\INCRA-CAR\Analise_Conformidade"
 
 # Estados a PULAR nesta execução (opcional). Deixe vazio para processar TODOS.
-# Útil quando você já reprocessou alguns e quer refazer só os demais.
 PULAR: list[str] = []
 # Para rodar SÓ alguns estados, liste as siglas aqui (senão deixe vazio = todos).
 SOMENTE_ESTES: list[str] = []
 
-# Apagar os .shp descompactados ao terminar cada estado (poupa espaço)?
+# Apagar o .shp descompactado ao terminar cada estado (poupa espaço)?
 APAGAR_SHP_AO_FIM = True
 
-# Natureza da referência INCRA usada nesta rodada.
-NATUREZA = "Privado"
-
-# Planos usados na análise. AREA_IMOVEL é obrigatório; os 3 temáticos entram
-# no recorte final. Nomes = nomes das subpastas/zip dentro da pasta do estado.
+# Plano usado nesta etapa. Os planos temáticos entram só no script 5.
 PLANO_AREA = "AREA_IMOVEL"
-PLANOS_TEMATICOS = ["APPS", "RESERVA_LEGAL", "USO_RESTRITO"]
 # =====================================================================
 
 
@@ -118,7 +127,7 @@ def descompactar_plano(pasta_estado: str, plano: str) -> list[str]:
         shps = sorted(glob.glob(os.path.join(pasta_plano, "*.shp")))
         if shps:
             return shps
-    # 2) zip solto na pasta do estado (ex.: APPS.zip)
+    # 2) zip solto na pasta do estado (ex.: AREA_IMOVEL.zip)
     z = os.path.join(pasta_estado, plano + ".zip")
     if os.path.exists(z):
         os.makedirs(pasta_plano, exist_ok=True)
@@ -142,24 +151,19 @@ def juntar_pedacos(shps: list[str], destino: str) -> str:
     return destino
 
 
-def achar_incra(uf: str) -> tuple[str | None, str | None]:
-    """Localiza SIGEF_Privado_<UF>.shp e SNCI_Privado_<UF>.shp."""
-    sigef = os.path.join(PASTA_INCRA, f"SIGEF_Privado_{uf}.shp")
-    snci = os.path.join(PASTA_INCRA, f"SNCI_Privado_{uf}.shp")
-    return (sigef if os.path.exists(sigef) else None,
-            snci if os.path.exists(snci) else None)
-
-
 def processar_estado(nome_pasta: str) -> None:
-    """Roda o fluxo completo para um estado. Lança exceção em caso de erro."""
+    """Roda a preparação para um estado. Lança exceção em caso de erro."""
     pasta_estado = os.path.join(PASTA_SICAR, nome_pasta)
     uf = uf_da_pasta(nome_pasta)
     if not uf:
         raise ValueError(f"não reconheci a UF da pasta '{nome_pasta}'")
 
     print(f"\n{'='*60}\n  {nome_pasta}  (UF={uf})\n{'='*60}", file=sys.stderr)
-    saida = os.path.join(pasta_estado, f"_saida_{uf}")
-    os.makedirs(saida, exist_ok=True)
+    pasta_saida_uf = os.path.join(PASTA_ANALISE, f"dados_saída_{uf}")
+    pasta_shp = os.path.join(pasta_saida_uf, f"{uf}_shapefile")
+    pasta_gpkg = os.path.join(pasta_saida_uf, f"{uf}_geopackage")
+    os.makedirs(pasta_shp, exist_ok=True)
+    os.makedirs(pasta_gpkg, exist_ok=True)
 
     criados_tmp: list[str] = []  # arquivos que podemos apagar no fim
 
@@ -169,67 +173,29 @@ def processar_estado(nome_pasta: str) -> None:
     if not shps_area:
         raise FileNotFoundError(f"AREA_IMOVEL não encontrado em {pasta_estado}")
     area_unico = juntar_pedacos(
-        shps_area, os.path.join(saida, f"_area_imovel_{uf}.shp"))
+        shps_area, os.path.join(pasta_shp, f"_area_imovel_{uf}.shp"))
     if area_unico != shps_area[0]:
         criados_tmp.append(area_unico)
-
-    # ---- INCRA ----
-    sigef, snci = achar_incra(uf)
-    if not sigef and not snci:
-        raise FileNotFoundError(
-            f"INCRA de {uf} não encontrado (SIGEF/SNCI_Privado_{uf}.shp)")
-
-    # ---- planos temáticos (aceitam vários pedaços; passamos a lista) ----
-    tematicos: dict[str, list[str]] = {}
-    for plano in PLANOS_TEMATICOS:
-        print(f"  [descompactar] {plano}...", file=sys.stderr)
-        shps = descompactar_plano(pasta_estado, plano)
-        if shps:
-            tematicos[plano] = shps
 
     # ---- PREPARAR ----
     print("  [preparar] separando por fase...", file=sys.stderr)
     cmd_prep = [sys.executable, "-m", "conformidade.cli", "preparar",
-                "--area-imovel", area_unico, "--uf", uf, "--saida", saida]
+                "--area-imovel", area_unico, "--uf", uf, "--saida", pasta_gpkg]
     _run(cmd_prep, f"preparar {uf}")
-
-    # ---- ANALISAR ----
-    print("  [analisar] classificando + recorte...", file=sys.stderr)
-    gpkg_analisados = os.path.join(saida, f"{uf}_analisados.gpkg")
-    cmd_ana = [sys.executable, "-m", "conformidade.cli", "analisar",
-               "--sicar", os.path.join(saida, f"{uf}_trabalho.gpkg"),
-               "--sicar-camada", "AREA_IMOVEL",
-               "--natureza", NATUREZA,
-               "--uf", uf, "--saida", saida]
-    # o pacote de analisados só existe se houver imóveis na fase Analisado
-    if os.path.exists(gpkg_analisados):
-        cmd_ana += ["--analisados", gpkg_analisados,
-                    "--analisados-camada", "AREA_IMOVEL"]
-    if sigef:
-        cmd_ana += ["--sigef", sigef]
-    if snci:
-        cmd_ana += ["--snci", snci]
-    for plano, chave in [("APPS", "--apps"), ("RESERVA_LEGAL", "--reserva-legal"),
-                         ("USO_RESTRITO", "--uso-restrito")]:
-        if plano in tematicos:
-            cmd_ana += [chave] + tematicos[plano]
-    _run(cmd_ana, f"analisar {uf}")
 
     # ---- limpeza dos .shp descompactados ----
     if APAGAR_SHP_AO_FIM:
         print("  [limpeza] apagando .shp descompactados...", file=sys.stderr)
-        for plano in [PLANO_AREA] + PLANOS_TEMATICOS:
-            _apagar_shapefiles(os.path.join(pasta_estado, plano))
+        _apagar_shapefiles(os.path.join(pasta_estado, PLANO_AREA))
         for tmp in criados_tmp:
             _apagar_shapefile_unico(tmp)
 
-    print(f"  OK: resultado em {saida}", file=sys.stderr)
+    print(f"  OK: resultado em {pasta_gpkg}", file=sys.stderr)
 
 
 def _run(cmd: list[str], rotulo: str) -> None:
     """Executa um subcomando e mostra o resumo; lança erro se falhar."""
     r = subprocess.run(cmd, capture_output=True, text=True)
-    # mostra só as últimas linhas do resumo (stderr do CLI traz o progresso)
     saida = (r.stderr or "") + (r.stdout or "")
     for linha in saida.strip().splitlines()[-12:]:
         print("    " + linha, file=sys.stderr)
@@ -269,7 +235,7 @@ def main() -> int:
     for nome in pastas:
         uf = uf_da_pasta(nome)
         if not uf:
-            continue  # pasta que não é estado (ex.: uma pasta de saída avulsa)
+            continue  # pasta que não é estado
         if uf in PULAR:
             continue
         if SOMENTE_ESTES and uf not in SOMENTE_ESTES:
@@ -300,7 +266,7 @@ def main() -> int:
         for uf, msg in falhas:
             print(f"  {uf}: {msg}", file=sys.stderr)
     else:
-        print("\nNenhuma falha. 🎉", file=sys.stderr)
+        print("\nNenhuma falha.", file=sys.stderr)
     return 0
 
 

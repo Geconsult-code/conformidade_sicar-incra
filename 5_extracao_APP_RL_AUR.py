@@ -1,28 +1,41 @@
+# -*- coding: utf-8 -*-
 r"""
-recorte_notificacao.py — recorta as camadas temáticas APP / RESERVA_LEGAL /
-USO_RESTRITO para os imóveis "Representante (manter)" da análise de conformidade
-dos "Analisado, aguardando atendimento a notificação" (conformidade_notificacao.py).
+5_extracao_APP_RL_AUR.py — extrai as camadas temáticas APP / RESERVA_LEGAL /
+USO_RESTRITO (AUR) do SICAR bruto, para os imóveis já selecionados:
 
-Como o <UF>_analisados.gpkg guarda apenas o AREA_IMOVEL (sem os planos
+  Habilitados      : TODOS os imóveis de <UF>_Imoveis_Privados_Habilitados.gpkg
+                      (não passam pela análise de conformidade do script 4 —
+                      por definição já não têm pendência).
+  Analisados       : só os "Representante (manter)" da análise de
+                      conformidade do script 4, em
+                      <UF>_Conformidade_Imoveis_Analisados.gpkg.
+  Não Analisados   : idem, em <UF>_Conformidade_Imoveis_Nao_Analisados.gpkg.
+
+(Generalização de recorte_notificacao.py — 5o passo do workflow numerado do
+repositório, inserido entre a análise de conformidade [script 4] e a
+validação final [script 6].)
+
+Como os geopackages de imóveis guardam só o AREA_IMOVEL (sem os planos
 temáticos), as APP/RL/AUR são lidas da FONTE BRUTA do SICAR
-(BASE_CAR_ESTADOS_05_2026\<ESTADO>\), descompactando os .zip e juntando os
-pedaços fatiados — a mesma lógica do processar_lote.py do fluxo principal.
+(PASTA_SICAR\<ESTADO>\), descompactando os .zip e juntando os pedaços
+fatiados quando necessário.
 
-Para cada estado:
-  1. lê <UF>_notificacao_Privado.gpkg (camada <UF>_Notificacao_Coerentes) e
-     seleciona os cod_imovel com selecao_final == "Representante (manter)";
+Para cada estado x categoria:
+  1. lê o geopackage de origem da categoria e define o conjunto de
+     cod_imovel a extrair (todos, para Habilitados; só "Representante
+     (manter)", para Analisados/Não Analisados);
   2. descompacta APPS / RESERVA_LEGAL / USO_RESTRITO do bruto e concatena;
-  3. filtra as feições temáticas por esses cod_imovel (descartando canceladas,
-     por segurança);
-  4. grava as camadas APPS / RESERVA_LEGAL / USO_RESTRITO no MESMO
-     <UF>_notificacao_Privado.gpkg.
+  3. filtra as feições temáticas por esses cod_imovel (descartando
+     canceladas, por segurança);
+  4. grava as camadas CAR_<UF>_APP_Selecionados_<Categoria>,
+     CAR_<UF>_RL_Selecionados_<Categoria> e CAR_<UF>_AUR_Selecionados_<Categoria>
+     no MESMO geopackage de origem da categoria.
 
 COMO USAR
 ---------
-1. Confira os caminhos na seção CONFIG.
-2. Ambiente 'geo' ativo:
-       python recorte_notificacao.py
-   Valide com SOMENTE_ESTES = ["AC"]; depois esvazie para todos.
+Ambiente 'geo' ativo:
+    python 5_extracao_APP_RL_AUR.py
+Valide com SOMENTE_ESTES = ["AC"]; depois esvazie para todos.
 """
 
 from __future__ import annotations
@@ -40,19 +53,19 @@ from conformidade.io_dados import ler_camada, escrever_camada
 from conformidade.fases import classificar_fase, CANCELADO
 
 # =============================== CONFIG ===============================
-PASTA_BASE = r"C:\Users\User\Dropbox\#CONSULTANCY\PLANAVEG\GEODATABASE\INCRA-CAR"
+PASTA_ANALISE = r"C:\Users\User\Dropbox\#CONSULTANCY\PLANAVEG\GEODATABASE\INCRA-CAR\Analise_Conformidade"
 PASTA_SICAR = r"C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026"
 
 # Deixe vazio para TODOS; ou liste siglas (ex.: ["AC"]) para validar.
-SOMENTE_ESTES: list[str] = ["SP"]
+SOMENTE_ESTES: list[str] = []
 
 # Apagar os .shp descompactados ao terminar cada estado (poupa espaço)?
 APAGAR_SHP_AO_FIM = True
 
-NATUREZA = "Privado"
 COL_COD = "cod_imovel"
-PLANOS_TEMATICOS = ["APPS", "RESERVA_LEGAL", "USO_RESTRITO"]
+PLANOS_TEMATICOS = [("APPS", "APP"), ("RESERVA_LEGAL", "RL"), ("USO_RESTRITO", "AUR")]
 SEL_MANTER = "Representante (manter)"
+CATEGORIAS = ["Habilitados", "Analisados", "Nao_Analisados"]
 # =====================================================================
 
 NOME_PARA_UF = {
@@ -67,10 +80,11 @@ NOME_PARA_UF = {
     "TOCANTINS": "TO",
 }
 UF_PARA_NOME = {uf: nome for nome, uf in NOME_PARA_UF.items()}
+UFS = sorted(NOME_PARA_UF.values())
 
 
 def _norm(txt: str) -> str:
-    t = unicodedata.normalize("NFKD", str(txt))
+    t = unicodedata.normalize("NFKD", txt)
     t = "".join(c for c in t if not unicodedata.combining(c))
     return " ".join(t.upper().split())
 
@@ -124,40 +138,58 @@ def _apagar_shapefiles(pasta: str) -> None:
                     pass
 
 
-def processar_uf(uf: str) -> dict:
-    """Recorta as temáticas dos 'manter' de um estado. Lança exceção em erro."""
-    gpkg_notif = os.path.join(PASTA_BASE, f"_saida_{uf}",
-                              f"{uf}_notificacao_{NATUREZA}.gpkg")
-    if not os.path.exists(gpkg_notif):
-        raise FileNotFoundError(f"{uf}_notificacao_{NATUREZA}.gpkg não encontrado")
+def cods_alvo(pasta_gpkg: str, uf: str, categoria: str) -> tuple[set[str], str] | None:
+    """Determina o gpkg de origem/destino e o conjunto de cod_imovel a extrair.
 
-    coer = ler_camada(gpkg_notif, f"{uf}_Notificacao_Coerentes")
+    Retorna (cods, caminho_gpkg) ou None se a fonte não existir/estiver vazia.
+    """
+    if categoria == "Habilitados":
+        caminho = os.path.join(pasta_gpkg, f"{uf}_Imoveis_Privados_Habilitados.gpkg")
+        layer = f"CAR_{uf}_Imoveis_Habilitados"
+        if not os.path.exists(caminho):
+            return None
+        gdf = ler_camada(caminho, layer)
+        cods = set(gdf[COL_COD].astype(str))
+        return (cods, caminho) if cods else None
+
+    caminho = os.path.join(pasta_gpkg, f"{uf}_Conformidade_Imoveis_{categoria}.gpkg")
+    layer = f"CAR_{uf}_Imoveis_{categoria}_coerentes"
+    if not os.path.exists(caminho):
+        return None
+    coer = ler_camada(caminho, layer)
     if "selecao_final" not in coer.columns:
-        raise KeyError("camada de coerentes sem 'selecao_final'")
+        raise KeyError(f"{caminho}::{layer} sem 'selecao_final'")
     manter = coer[coer["selecao_final"] == SEL_MANTER]
     cods = set(manter[COL_COD].astype(str))
-    if not cods:
-        return {"uf": uf, "manter": 0, "aviso": "nenhum imóvel 'manter'"}
+    return (cods, caminho) if cods else None
+
+
+def processar_uf_categoria(uf: str, categoria: str) -> dict:
+    """Extrai as temáticas de um bucket de um estado. Lança exceção em erro."""
+    pasta_gpkg = os.path.join(PASTA_ANALISE, f"dados_saída_{uf}", f"{uf}_geopackage")
+
+    alvo = cods_alvo(pasta_gpkg, uf, categoria)
+    if alvo is None:
+        return {"uf": uf, "categoria": categoria, "aviso": "fonte vazia ou inexistente"}
+    cods, gpkg_destino = alvo
 
     pasta_estado = achar_pasta_estado(uf)
     if not pasta_estado:
-        raise FileNotFoundError(f"pasta bruta do estado {uf} não encontrada "
-                                f"em {PASTA_SICAR}")
+        raise FileNotFoundError(f"pasta bruta do estado {uf} não encontrada em {PASTA_SICAR}")
 
-    resumo = {"uf": uf, "manter": len(cods)}
-    for plano in PLANOS_TEMATICOS:
+    resumo = {"uf": uf, "categoria": categoria, "selecionados": len(cods)}
+    for plano, sigla in PLANOS_TEMATICOS:
         shps = descompactar_plano(pasta_estado, plano)
         if not shps:
-            resumo[plano] = 0
+            resumo[sigla] = 0
             continue
         partes = []
         for shp in shps:
             g = ler_camada(shp)
             if COL_COD not in g.columns:
                 continue
-            # filtra pelos cod_imovel dos 'manter'
             g = g[g[COL_COD].astype(str).isin(cods)]
-            # salvaguarda: descarta feições canceladas (não deve haver, mas segura)
+            # salvaguarda: descarta feições canceladas
             if "des_condic" in g.columns and len(g) > 0:
                 fase = g["des_condic"].map(classificar_fase)
                 g = g[fase != CANCELADO]
@@ -166,54 +198,45 @@ def processar_uf(uf: str) -> dict:
         if partes:
             sel = gpd.GeoDataFrame(pd.concat(partes, ignore_index=True),
                                    crs=partes[0].crs)
-            escrever_camada(sel, gpkg_notif, plano)
-            resumo[plano] = len(sel)
+            escrever_camada(sel, gpkg_destino, f"CAR_{uf}_{sigla}_Selecionados_{categoria}")
+            resumo[sigla] = len(sel)
         else:
-            resumo[plano] = 0
+            resumo[sigla] = 0
 
     if APAGAR_SHP_AO_FIM:
-        for plano in PLANOS_TEMATICOS:
+        for plano, _ in PLANOS_TEMATICOS:
             _apagar_shapefiles(os.path.join(pasta_estado, plano))
 
     return resumo
 
 
 def main() -> int:
-    saidas = sorted(glob.glob(os.path.join(PASTA_BASE, "_saida_*")))
-    alvos = []
-    for d in saidas:
-        uf = os.path.basename(d).replace("_saida_", "").upper()
-        if SOMENTE_ESTES and uf not in SOMENTE_ESTES:
-            continue
-        # só faz sentido para estados que têm o gpkg de notificação
-        if os.path.exists(os.path.join(d, f"{uf}_notificacao_{NATUREZA}.gpkg")):
-            alvos.append(uf)
-
+    alvos = SOMENTE_ESTES if SOMENTE_ESTES else UFS
     print(f"Estados a processar ({len(alvos)}): {', '.join(alvos)}")
     print(f"Início: {datetime.now():%H:%M:%S}\n")
 
     sucesso, falhas = [], []
     for uf in alvos:
-        print(f"  [{uf}] recortando temáticas...", flush=True)
-        try:
-            r = processar_uf(uf)
-            if r.get("aviso"):
-                print(f"       (aviso: {r['aviso']})", flush=True)
-            else:
-                print(f"       manter={r['manter']} | APPS={r.get('APPS',0)} "
-                      f"| RL={r.get('RESERVA_LEGAL',0)} "
-                      f"| AUR={r.get('USO_RESTRITO',0)}", flush=True)
-            sucesso.append(uf)
-        except Exception as e:
-            print(f"       !! ERRO: {e}", flush=True)
-            falhas.append((uf, str(e)))
+        for categoria in CATEGORIAS:
+            print(f"  [{uf}] {categoria}: extraindo temáticas...", flush=True)
+            try:
+                r = processar_uf_categoria(uf, categoria)
+                if r.get("aviso"):
+                    print(f"       (aviso: {r['aviso']})", flush=True)
+                else:
+                    print(f"       selecionados={r['selecionados']} | APP={r.get('APP', 0)} "
+                          f"| RL={r.get('RL', 0)} | AUR={r.get('AUR', 0)}", flush=True)
+                sucesso.append(f"{uf}::{categoria}")
+            except Exception as e:
+                print(f"       !! ERRO: {e}", flush=True)
+                falhas.append((f"{uf}::{categoria}", str(e)))
 
     print(f"\n{'#'*60}\n  RELATÓRIO ({datetime.now():%H:%M:%S})\n{'#'*60}")
     print(f"Sucesso ({len(sucesso)}): {', '.join(sucesso) or '—'}")
     if falhas:
         print(f"Falhas ({len(falhas)}):")
-        for uf, msg in falhas:
-            print(f"  {uf}: {msg}")
+        for chave, msg in falhas:
+            print(f"  {chave}: {msg}")
     return 0
 
 
