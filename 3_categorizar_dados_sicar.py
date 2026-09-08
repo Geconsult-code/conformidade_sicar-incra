@@ -23,8 +23,8 @@ projeto para as camadas CAR_<UF>_...):
     <UF>_Imoveis_Privados_Analisados.gpkg      layer CAR_<UF>_Imoveis_Analisados
     <UF>_Imoveis_Privados_Nao_Analisados.gpkg  layer CAR_<UF>_Imoveis_Nao_Analisados
 
-Os des_condic da fase Analisado que NÃO batem com nenhum dos 6 textos
-conhecidos (5 de Habilitados + 1 de Analisados) NÃO são descartados
+Os des_condic da fase Analisado que NÃO batem com nenhum dos 8 textos
+conhecidos (5 de Habilitados + 3 de Analisados) NÃO são descartados
 silenciosamente: entram numa quarta saída de auditoria,
 <UF>_Imoveis_Privados_Outros_Analisado.gpkg (layer
 CAR_<UF>_Imoveis_Outros_Analisado), e o script imprime um aviso com a
@@ -70,6 +70,11 @@ HABILITADOS_TEXTOS = [
 ]
 ANALISADOS_TEXTOS = [
     "Analisado, aguardando atendimento a notificação",
+    # variantes descobertas em auditoria (*_Outros_Analisado.gpkg) e
+    # classificadas manualmente como Analisados (com pendência), não
+    # Habilitados — decisão do usuário, não uma inferência automática:
+    "Analisado, em regularização ambiental (Lei n 12.651/2012), com ativos ambientais",
+    "Analisado pelo Filtro Automático",
 ]
 # =====================================================================
 
