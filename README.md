@@ -96,14 +96,24 @@ nomes já usado no projeto (prefixo `CAR_<UF>_...` nas camadas):
                                               CAR_<UF>_APP_Selecionados_Habilitados
                                               CAR_<UF>_RL_Selecionados_Habilitados
                                               CAR_<UF>_AUR_Selecionados_Habilitados
+
 <UF>_Imoveis_Privados_Analisados.gpkg        CAR_<UF>_Imoveis_Analisados
 <UF>_Conformidade_Imoveis_Analisados.gpkg    CAR_<UF>_Imoveis_Analisados_coerentes / _incoerentes
                                               CAR_<UF>_APP_Selecionados_Analisados (dos "manter")
                                               CAR_<UF>_RL_Selecionados_Analisados
                                               CAR_<UF>_AUR_Selecionados_Analisados
+
 <UF>_Imoveis_Privados_Nao_Analisados.gpkg    CAR_<UF>_Imoveis_Nao_Analisados
-<UF>_Conformidade_Imoveis_Nao_Analisados.gpkg  (mesmo padrão de Analisados)
+<UF>_Conformidade_Imoveis_Nao_Analisados.gpkg  CAR_<UF>_Imoveis_Nao_Analisados_coerentes / _incoerentes
+                                              CAR_<UF>_APP_Selecionados_Nao_Analisados (dos "manter")
+                                              CAR_<UF>_RL_Selecionados_Nao_Analisados
+                                              CAR_<UF>_AUR_Selecionados_Nao_Analisados
 ```
+
+Ou seja: cada uma das três categorias (Habilitados, Analisados, Não
+Analisados) recebe suas próprias três camadas temáticas
+(`APP`/`RL`/`AUR`_Selecionados_`<Categoria>`) — nove camadas temáticas no
+total por UF, geradas pelo script 5 (`5_extracao_APP_RL_AUR.py`).
 
 ### Como rodar
 
