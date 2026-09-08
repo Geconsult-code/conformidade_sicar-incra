@@ -3,7 +3,8 @@
 Este documento descreve a metodologia de classificação da coerência entre os
 imóveis do **SICAR** (Sistema de Cadastro Ambiental Rural) e a delimitação
 fundiária do **INCRA** (bases **SIGEF** e **SNCI**), incluindo o filtro de
-sobreposição espacial e o recorte das camadas temáticas (APP, RL, AUR).
+sobreposição espacial, a categorização dos imóveis Analisado e o recorte das
+camadas temáticas (APP, RL, AUR).
 
 ## 1. Objetivo
 
@@ -13,6 +14,11 @@ Análise"** — que, embora ainda não analisados pelo órgão competente, mostr
 premissa é que o cadastro do INCRA (imóveis escriturados, via SIGEF/SNCI) é a
 referência geométrica mais precisa disponível, por não ser meramente
 declaratório como o SICAR.
+
+O mesmo teste de coerência é aplicado também aos imóveis já **Analisado**, mas
+ainda com uma pendência de notificação em aberto (ver seção 2.6) — o processo
+é o mesmo, muda apenas o conjunto usado como referência de prioridade
+(seção 5.5).
 
 Uma vez identificados os imóveis coerentes, o objetivo seguinte é analisar as
 áreas de **APP** (Área de Preservação Permanente), **RL** (Reserva Legal) e
@@ -26,6 +32,7 @@ imóveis **sem sobreposição espacial entre si**, para evitar dupla contagem de
 |------|-------|------------|
 | SICAR "Em Análise" | imóveis a classificar | declaratório |
 | SICAR "Aguardando Análise" | imóveis a classificar | declaratório |
+| SICAR "Analisado, aguardando atendimento a notificação" | imóveis a classificar | declaratório, mas já passou por triagem inicial |
 | SIGEF | referência (INCRA) | georreferenciado, escriturado |
 | SNCI | referência (INCRA) | georreferenciado, escriturado |
 | APP / RL / AUR | camadas temáticas do CAR | mesma chave `cod_imovel` |
@@ -55,14 +62,44 @@ primeira etapa separa os imóveis pela **fase de análise**, registrada no campo
 | Fase | Destino |
 |------|---------|
 | **Cancelado** (e derivações) | descartado — não entra na análise |
-| **Analisado** (e derivações) | `<UF>_analisados.gpkg` (com os nove planos filtrados) — reservado para análises futuras e usado no **filtro final** |
+| **Analisado** (e derivações) | `<UF>_analisados.gpkg` (com os nove planos filtrados) — segue para a categorização da seção 2.6 |
 | **Em Análise** | `<UF>_trabalho.gpkg` |
 | **Aguardando Análise** | `<UF>_trabalho.gpkg` |
 
-O pacote **trabalho** (Em Análise + Aguardando) é o que alimenta a análise de
-conformidade. O pacote **analisados** é separado porque esses imóveis já
-passaram pelo crivo do órgão competente — servem de referência prioritária no
-final do processo (ver seção 5.5) e de insumo para outras análises.
+O pacote **trabalho** (Em Análise + Aguardando) corresponde diretamente à
+categoria **Não Analisados** (seção 2.6) e alimenta a análise de conformidade
+desse bucket. O pacote **analisados** é subdividido em duas categorias na
+etapa seguinte, antes de seguir para a análise.
+
+## 2.6. Categorização dos imóveis Analisado (Habilitados × Analisados)
+
+Nem todo imóvel na fase **Analisado** está no mesmo estágio: uma parte já está
+plenamente regularizada, e outra tem uma **notificação pendente de
+atendimento**. Essa distinção importa porque só o segundo grupo precisa passar
+pela análise de coerência espacial — o primeiro já é, por definição, a
+referência mais confiável disponível (mais confiável até que os imóveis "Em
+Análise"/"Aguardando", que ainda não foram examinados pelo órgão). Por isso o
+`des_condic` da fase Analisado é subdividido em duas categorias, por
+correspondência **exata** de texto (tolerante a acento/caixa, mas não a
+substring — os textos são parecidos entre si e uma correspondência parcial
+classificaria errado):
+
+| Categoria | `des_condic` (textos exatos) |
+|-----------|------------------------------|
+| **Habilitados** | "Analisado, em regularização ambiental (Lei n 12.651/2012)"; "Analisado, em conformidade com a Lei n 12.651/2012"; "Analisado, em conformidade com a Lei n 12.651/2012, com ativos ambientais"; "Analisado, aguardando regularização ambiental (Lei n 12.651/2012)"; "Analisado sem pendências" |
+| **Analisados** | "Analisado, aguardando atendimento a notificação" |
+
+Um `des_condic` da fase Analisado que não corresponda a nenhum dos textos
+acima **não é classificado por aproximação**: é desviado para uma saída de
+auditoria separada, para revisão manual, em vez de arriscar uma categorização
+incorreta num dado de conformidade legal.
+
+As três categorias resultantes — **Habilitados**, **Analisados** e **Não
+Analisados** — são a unidade de trabalho de todo o restante do processo
+(classificação de coerência, filtro de prioridade e recorte temático).
+Habilitados não passa pela classificação de coerência (seções 3 a 5.5): por
+definição já não tem pendência, então segue direto para o recorte temático
+(seção 6).
 
 ## 3. Classificação de coerência (categoria `motivo`)
 
@@ -169,64 +206,82 @@ campo `pai_cod` guarda o imóvel maior que mais cobre `X`.
 > seja, o resultado é pouco sensível ao valor exato do limiar. As pequenas
 > sobreposições de borda já haviam sido tratadas com o piso de 1% na subdivisão.
 
-## 5.5. Filtro final contra os imóveis Analisado
+## 5.5. Filtro final contra a referência de prioridade
 
-A sobreposição da seção 5 é **interna** ao conjunto de trabalho (Em Análise +
-Aguardando). Falta garantir que o resultado também não se sobreponha aos imóveis
-já **Analisado** — que não entraram na análise por já terem sido decididos pelo
-órgão. Este é o passo final.
+A sobreposição da seção 5 é **interna** ao universo sendo classificado (um dos
+buckets Analisados/Não Analisados — seção 2.6). Falta garantir que o resultado
+também não se sobreponha aos imóveis de **maior prioridade**, que não entraram
+na análise por já terem sido decididos/consolidados. Este é o passo final.
 
-Os imóveis marcados `representante` na etapa interna são testados contra o
-conjunto de imóveis **Analisado**:
+A referência de prioridade **depende do bucket**:
+
+| Universo classificado | Referência de prioridade |
+|------------------------|---------------------------|
+| **Analisados** (com pendência de notificação) | **Habilitados** — os demais imóveis Analisado, sem pendência |
+| **Não Analisados** (Em Análise + Aguardando) | **Habilitados + Analisados** juntos — todo imóvel já na fase Analisado, com ou sem pendência |
+
+Os imóveis marcados `representante` na etapa interna são testados contra essa
+referência:
 
 ```
 frac_analisado(X) = área(X ∩ A) / área(X)
 ```
 
-tomada sobre o imóvel analisado `A` de maior interseção. Se
+tomada sobre o imóvel de referência `A` de maior interseção. Se
 `frac_analisado ≥ limiar_vs_analisado`, o imóvel `X` é descartado do conjunto
 final.
 
 Duas diferenças em relação à sobreposição interna:
 
-1. **Prioridade absoluta do Analisado.** O imóvel analisado nunca é removido —
-   representa uma decisão consolidada. Só o imóvel de trabalho pode sair.
+1. **Prioridade absoluta da referência.** Um imóvel da referência nunca é
+   removido — representa uma decisão já consolidada (Habilitados) ou de maior
+   confiança (Habilitados+Analisados, para o universo Não Analisados). Só o
+   imóvel do universo sendo classificado pode sair.
 2. **Independe do tamanho.** Ao contrário da regra interna (onde o "pai" é o
-   maior), aqui o analisado prevalece mesmo que seja menor.
+   maior), aqui a referência prevalece mesmo que seja menor.
 
 O resultado é consolidado no campo **`selecao_final`**:
 
 | `selecao_final` | significado |
 |-----------------|-------------|
-| `Representante (manter)` | representante interno **e** livre frente aos analisados — entra no conjunto final |
+| `Representante (manter)` | representante interno **e** livre frente à referência de prioridade — entra no conjunto final |
 | `redundante_interno` | descartado já na sobreposição interna (seção 5) |
-| `sobrepoe_analisado` | representante interno, mas sobrepõe um imóvel Analisado |
+| `sobrepoe_analisado` | representante interno, mas sobrepõe um imóvel da referência de prioridade |
 
-Assim, o conjunto `Representante (manter)` fica **sem sobreposição entre imóveis
-do SICAR, independentemente da fase** — que é o objetivo para a análise de áreas.
-Os limiares interno e contra-analisados são configuráveis separadamente. O
-padrão da sobreposição interna é **0,10**; o do filtro contra analisados é
-**0,30**, calibrado no Pará.
+Assim, o conjunto `Representante (manter)` de cada bucket fica **sem
+sobreposição entre imóveis do SICAR daquele bucket, nem com a referência de
+prioridade** — que é o objetivo para a análise de áreas. Os limiares interno e
+contra-a-referência são configuráveis separadamente. O padrão da sobreposição
+interna é **0,10**; o do filtro contra a referência de prioridade é **0,30**,
+calibrado no Pará (na época, contra o bucket "Analisado" ainda não subdividido
+em Habilitados/Analisados — a mecânica do limiar não muda com a subdivisão,
+só a composição do conjunto de referência).
 
-> **Calibração do limiar contra analisados.** Uma análise de sensibilidade no
-> Pará mostrou que, dos representantes eliminados a 0,10, cerca de 73% tinham
-> sobreposição de 70% ou mais com um imóvel analisado (duplicatas reais),
-> enquanto uma fração menor apenas encostava (10–30%). O corte em **0,30**
-> elimina quem sobrepõe um terço ou mais da área de um imóvel já analisado
-> (removendo as duplicatas substanciais) e preserva os que só tangenciam. O
-> campo `frac_analisado` fica gravado, permitindo recalibrar por filtragem sem
-> reprocessar.
+> **Calibração do limiar contra a referência de prioridade.** Uma análise de
+> sensibilidade no Pará mostrou que, dos representantes eliminados a 0,10,
+> cerca de 73% tinham sobreposição de 70% ou mais com um imóvel da referência
+> (duplicatas reais), enquanto uma fração menor apenas encostava (10–30%). O
+> corte em **0,30** elimina quem sobrepõe um terço ou mais da área de um
+> imóvel de referência (removendo as duplicatas substanciais) e preserva os
+> que só tangenciam. O campo `frac_analisado` fica gravado, permitindo
+> recalibrar por filtragem sem reprocessar.
 
 ## 6. Recorte temático (APPS / RESERVA_LEGAL / USO_RESTRITO)
 
-Para os imóveis `Representante (manter)`, anexam-se ao pacote de trabalho as três
-camadas temáticas relevantes à análise subsequente de áreas: **APPS**,
-**RESERVA_LEGAL** e **USO_RESTRITO**. Essas feições trazem o mesmo `cod_imovel`,
-então o recorte é uma **seleção por atributo** (junção pela chave), mantendo
-apenas as feições dos imóveis a manter. Os atributos de classificação (`motivo`,
+Para os imóveis selecionados, anexam-se as três camadas temáticas relevantes à
+análise subsequente de áreas: **APPS**, **RESERVA_LEGAL** e **USO_RESTRITO**.
+Essas feições trazem o mesmo `cod_imovel`, então o recorte é uma **seleção por
+atributo** (junção pela chave). Os atributos de classificação (`motivo`,
 `classe_espacial`, `frac_max`, `pai_cod`, `selecao_final`) são anexados às
-feições, permitindo filtrá-las também por esses eixos. A geometria é preservada
-integralmente.
+feições dos buckets que passaram pela classificação, permitindo filtrá-las
+também por esses eixos. A geometria é preservada integralmente.
+
+O critério de seleção depende do bucket:
+
+- **Habilitados** — recorte para **todos** os imóveis (não passou pela
+  classificação de coerência; por definição já não tem pendência).
+- **Analisados** e **Não Analisados** — recorte só para os imóveis
+  `Representante (manter)` (seção 5.5).
 
 > As demais camadas (AREA_CONSOLIDADA, HIDROGRAFIA etc.) não entram nesta análise
 > de conformidade, mas ficam preservadas no pacote `<UF>_analisados.gpkg` da
@@ -244,13 +299,21 @@ teste de sanidade permanente da execução.
   `QgsDistanceArea` com GRS80. Reprojeções para uma projeção métrica introduzem
   distorção variável por latitude e **não** são usadas para medir área.
 - **Geometrias**: são achatadas para 2D e validadas (`make_valid`) apenas em
-  cópias de trabalho; as saídas preservam a geometria original.
+  cópias de trabalho; as saídas preservam a geometria original. Geometrias
+  ainda inválidas na saída final são identificadas e corrigidas in-place pelo
+  passo 6 do pipeline de produção (`6_validacao_resultados.py`), com o mesmo
+  padrão `make_valid`/`buffer(0)` — nunca altera contagem de feições, só a
+  geometria de quem está inválido.
 - **GeoPackage acima de ~2 GB**: pode ser recusado por leitores rígidos (ArcGIS)
   mesmo com o arquivo íntegro. Quando uma saída se aproxima disso, o programa
   avisa; a recomendação é dividir por tipo/origem.
 
 ## 9. Reprodutibilidade
 
-A execução grava um relatório `relatorio_<UF>_<natureza>.json` com todos os
-parâmetros usados, as contagens por etapa e o resultado da verificação de
-conservação — de modo que qualquer execução seja auditável e reproduzível.
+A execução do núcleo (`conformidade analisar`) grava um relatório
+`relatorio_<UF>_<natureza>.json` com todos os parâmetros usados, as contagens
+por etapa e o resultado da verificação de conservação. O pipeline de produção
+soma a isso um relatório de consistência por UF/arquivo/camada (passo 6:
+`6_validacao_resultados.py`), com contagem de geometrias inválidas, área total
+e área por categoria (`des_condic` × `selecao_final`) — de modo que qualquer
+execução, manual ou em lote, seja auditável e reproduzível.

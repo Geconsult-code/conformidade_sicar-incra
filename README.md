@@ -14,7 +14,8 @@ processar vários estados de maneira automática e reproduzível.
 
 ## O que o programa faz
 
-O processo tem **dois comandos**, na ordem natural de trabalho:
+O núcleo (pacote `conformidade`) tem **dois comandos**, na ordem natural de
+trabalho:
 
 **`preparar`** (etapa 0) — parte dos dados brutos baixados do SICAR e separa os
 imóveis pela fase de análise (campo `des_condic`):
@@ -46,9 +47,84 @@ pode ser ligada/desligada com `--ate`):
 A cada etapa, o programa confere a **conservação** (nenhum imóvel perdido ou
 duplicado) e grava um relatório com os parâmetros usados.
 
+Esses dois comandos são o **núcleo reutilizável** (biblioteca `conformidade`,
+usável isoladamente para um estado/análise pontual — ver "Como usar" abaixo).
+Para rodar o **processo completo em produção**, Brasil inteiro e com a
+categorização em Habilitados/Analisados/Não Analisados, use os **scripts
+numerados** descritos na próxima seção.
+
 ---
 
-## Fluxo em um olhar
+## Pipeline de produção (scripts numerados)
+
+Para processar todos os estados de uma vez — e reprocessar quando novos dados
+do SICAR/INCRA saírem — o repositório traz uma sequência de **6 scripts
+numerados**, cada um cobrindo uma etapa do processo. Rode na ordem, um após o
+outro (cada um é resiliente: se um estado falhar, o script segue para os
+demais e lista as falhas no fim; rodar de novo não duplica o que já foi
+feito):
+
+| # | Script | O que faz |
+|---|--------|-----------|
+| 1 | [`1_processar_dados_incra.py`](1_processar_dados_incra.py) | Separa as bases nacionais do INCRA (SIGEF/SNCI) em um arquivo por UF. |
+| 2 | [`2_processar_dados_sicar.py`](2_processar_dados_sicar.py) | Descompacta o SICAR bruto (AREA_IMOVEL) de cada estado e roda `conformidade preparar`, separando por fase (`<UF>_analisados.gpkg` / `<UF>_trabalho.gpkg`). |
+| 3 | [`3_categorizar_dados_sicar.py`](3_categorizar_dados_sicar.py) | Separa os imóveis em **Habilitados**, **Analisados** (com pendência de notificação) e **Não Analisados**, por `des_condic` exato (ver tabela abaixo). |
+| 4 | [`4_analise_conformidade.py`](4_analise_conformidade.py) | Roda `conformidade analisar` (coerência + sobreposição + filtro final, sem recorte) para os buckets Analisados e Não Analisados. |
+| 5 | [`5_extracao_APP_RL_AUR.py`](5_extracao_APP_RL_AUR.py) | Extrai APP/RL/AUR do SICAR bruto: para **todos** os imóveis Habilitados, e só para os **"Representante (manter)"** de Analisados/Não Analisados. |
+| 6 | [`6_validacao_resultados.py`](6_validacao_resultados.py) | Relatório de consistência (geometrias inválidas, áreas por UF/categoria) + correção in-place das geometrias inválidas encontradas. |
+
+### As três categorias (script 3)
+
+| Categoria | `des_condic` | Passa pelo script 4? |
+|-----------|--------------|:---:|
+| **Habilitados** | "Analisado, em regularização ambiental (Lei n 12.651/2012)", "Analisado, em conformidade com a Lei n 12.651/2012" (com ou sem "com ativos ambientais"), "Analisado, aguardando regularização ambiental (Lei n 12.651/2012)", "Analisado sem pendências" | não — vão direto para o script 5 |
+| **Analisados** | "Analisado, aguardando atendimento a notificação" | sim — referência de prioridade: Habilitados |
+| **Não Analisados** | "Em análise", "Aguardando análise" (qualquer derivação) | sim — referência de prioridade: Habilitados + Analisados |
+
+`des_condic` da fase Analisado que não batam com nenhum dos textos acima não
+são classificados às cegas: vão para uma saída de auditoria separada
+(`*_Outros_Analisado.gpkg`), com aviso no console.
+
+### Saída
+
+Tudo é gravado por UF em
+`Analise_Conformidade\dados_saída_<UF>\<UF>_geopackage\`, com o padrão de
+nomes já usado no projeto (prefixo `CAR_<UF>_...` nas camadas):
+
+```
+<UF>_Imoveis_Privados_Habilitados.gpkg       CAR_<UF>_Imoveis_Habilitados
+                                              CAR_<UF>_APP_Selecionados_Habilitados
+                                              CAR_<UF>_RL_Selecionados_Habilitados
+                                              CAR_<UF>_AUR_Selecionados_Habilitados
+<UF>_Imoveis_Privados_Analisados.gpkg        CAR_<UF>_Imoveis_Analisados
+<UF>_Conformidade_Imoveis_Analisados.gpkg    CAR_<UF>_Imoveis_Analisados_coerentes / _incoerentes
+                                              CAR_<UF>_APP_Selecionados_Analisados (dos "manter")
+                                              CAR_<UF>_RL_Selecionados_Analisados
+                                              CAR_<UF>_AUR_Selecionados_Analisados
+<UF>_Imoveis_Privados_Nao_Analisados.gpkg    CAR_<UF>_Imoveis_Nao_Analisados
+<UF>_Conformidade_Imoveis_Nao_Analisados.gpkg  (mesmo padrão de Analisados)
+```
+
+### Como rodar
+
+```bash
+conda activate geo
+python 1_processar_dados_incra.py
+python 2_processar_dados_sicar.py
+python 3_categorizar_dados_sicar.py
+python 4_analise_conformidade.py
+python 5_extracao_APP_RL_AUR.py
+python 6_validacao_resultados.py
+```
+
+Antes de rodar, ajuste os caminhos no topo de cada script (`PASTA_SICAR`,
+`PASTA_INCRA`, `PASTA_ANALISE`). Por padrão cada um processa **todos** os
+estados encontrados; para validar com um estado só, preencha
+`SOMENTE_ESTES = ["AC"]` no topo do script.
+
+---
+
+## Fluxo em um olhar (núcleo `preparar`/`analisar`)
 
 ```
    Download SICAR (9 planos, shapefile)
@@ -77,6 +153,10 @@ duplicado) e grava um relatório com os parâmetros usados.
                                    APPS/RESERVA_LEGAL/USO_RESTRITO
                                    dos "Representante (manter)")
 ```
+
+> Este é o fluxo do **núcleo** (dois comandos, um estado por vez). O pipeline
+> de produção (scripts 1 a 6, seção acima) o generaliza para as 27 UFs e para
+> as três categorias Habilitados/Analisados/Não Analisados.
 
 ---
 
@@ -122,10 +202,12 @@ conformidade --help
 
 ---
 
-## Como usar (tutorial)
+## Como usar o núcleo (tutorial manual, um estado por vez)
 
 O processo tem dois passos: **`preparar`** (uma vez por estado, a partir do
-download) e **`analisar`** (a conformidade em si).
+download) e **`analisar`** (a conformidade em si). Para o processo completo e
+automatizado (Brasil inteiro, três categorias), use os scripts numerados 1 a
+6 descritos acima — este tutorial é para uma análise pontual/manual.
 
 ### Passo 1 — Baixe os dados do estado
 
@@ -248,26 +330,6 @@ Lista completa: `conformidade preparar --help` e `conformidade analisar --help`.
 
 ---
 
-## Processamento em lote (Brasil inteiro)
-
-Para rodar todos os estados de uma vez — e reprocessar quando novos dados do
-SICAR/INCRA saírem — use o script [`processar_lote.py`](processar_lote.py). Ele
-varre a pasta dos estados, descompacta os planos, junta pedaços fatiados,
-localiza o INCRA de cada UF e roda `preparar` + `analisar`, gravando o resultado
-em `_saida_<UF>` dentro de cada estado.
-
-```bash
-python processar_lote.py
-```
-
-Antes de rodar, ajuste os caminhos no topo do script (`PASTA_SICAR`,
-`PASTA_INCRA`). Por padrão processa **todos** os estados encontrados; para
-refazer só alguns, preencha `SOMENTE_ESTES = ["SP", "TO"]`. Se um estado falhar,
-o script segue para o próximo e lista as falhas no fim. O INCRA por UF pode ser
-gerado das bases nacionais com [`separar_incra_por_uf.py`](separar_incra_por_uf.py).
-
----
-
 ## Uso como biblioteca (para quem programa)
 
 Todo o núcleo é importável:
@@ -286,6 +348,9 @@ res  = classificar_camada_sicar(sicar, ref, cfg, natureza="Privado")
 coer = aplicar_sobreposicao(res.coerentes, cfg)
 print(len(res.coerentes), "coerentes;", (coer.classe_espacial == "representante").sum(), "representantes")
 ```
+
+Os scripts numerados 1 a 6 usam exatamente essas mesmas funções — não há
+lógica duplicada entre o pipeline de produção e a biblioteca.
 
 ---
 
@@ -313,21 +378,25 @@ python exemplos/teste_nucleo.py
 ## Estrutura do repositório
 
 ```
-conformidade/            # biblioteca (núcleo reutilizável)
-  geometria.py           #   área geodésica GRS80, validação
-  fases.py               #   identificação de fase por des_condic
-  preparacao.py          #   etapa 0: separa por fase, monta os GeoPackages
-  classificacao.py       #   coerência (ramos A/B/C, 5 motivos)
-  subdivisao.py          #   subdivisão do contido_menor
-  sobreposicao.py        #   sobreposição interna + filtro contra Analisados
-  recorte.py             #   recorte APPS/RESERVA_LEGAL/USO_RESTRITO
-  io_dados.py            #   leitura/escrita, conservação
-  pipeline.py            #   orquestração modular
-  cli.py                 #   linha de comando (preparar / analisar)
-separar_incra_por_uf.py  # utilitário: separa SIGEF/SNCI nacionais por estado
-processar_lote.py        # processa todos os estados de uma vez (atualização)
-docs/metodologia.md      # documentação científica
-exemplos/teste_nucleo.py # testes automatizados do núcleo
+conformidade/                  # biblioteca (núcleo reutilizável)
+  geometria.py                 #   área geodésica GRS80, validação
+  fases.py                     #   identificação de fase por des_condic
+  preparacao.py                #   etapa 0: separa por fase, monta os GeoPackages
+  classificacao.py             #   coerência (ramos A/B/C, 5 motivos)
+  subdivisao.py                #   subdivisão do contido_menor
+  sobreposicao.py               #   sobreposição interna + filtro contra Analisados
+  recorte.py                   #   recorte APPS/RESERVA_LEGAL/USO_RESTRITO
+  io_dados.py                  #   leitura/escrita, conservação
+  pipeline.py                  #   orquestração modular
+  cli.py                       #   linha de comando (preparar / analisar)
+1_processar_dados_incra.py     # pipeline de produção, passo 1: INCRA por UF
+2_processar_dados_sicar.py     # pipeline de produção, passo 2: preparação por fase
+3_categorizar_dados_sicar.py   # pipeline de produção, passo 3: Habilitados/Analisados/Não Analisados
+4_analise_conformidade.py      # pipeline de produção, passo 4: coerência SICAR x INCRA
+5_extracao_APP_RL_AUR.py       # pipeline de produção, passo 5: recorte temático
+6_validacao_resultados.py      # pipeline de produção, passo 6: relatório + correção de geometrias
+docs/metodologia.md            # documentação científica
+exemplos/teste_nucleo.py       # testes automatizados do núcleo
 ```
 
 ---
@@ -344,7 +413,7 @@ citação automaticamente a partir do arquivo [`CITATION.cff`](CITATION.cff)
 (botão **"Cite this repository"**, no alto da página do repositório). Formato
 sugerido:
 
-> Braga Meira, M. (2026). *Conformidade SICAR × INCRA* (v0.1.0) [software].
+> Braga Meira, M. (2026). *Conformidade SICAR × INCRA* (v0.4.0) [software].
 > Geoconsult Ltda. https://github.com/Geconsult-code/analise_conformidade_sicar-incra
 
 ## Licença

@@ -6,14 +6,16 @@ abstract: >-
   Rural (SICAR) e a delimitação fundiária do INCRA (bases SIGEF e SNCI), com
   filtro de sobreposição espacial e recorte das camadas temáticas (APP, RL e
   AUR). Roda de forma independente do QGIS, por linha de comando, permitindo o
-  processamento reproduzível de múltiplos estados.
+  processamento reproduzível de múltiplos estados. Inclui um pipeline de
+  produção de seis etapas numeradas que categoriza os imóveis analisados em
+  Habilitados, Analisados (com pendência de notificação) e Não Analisados.
 type: software
 authors:
   - given-names: "Maurício"
     family-names: "Braga Meira"
     affiliation: "Geoconsult Ltda. (Consultoria especializada em geoinformação)"
-version: "0.3.0"
-date-released: "2026-08-10"
+version: "0.4.0"
+date-released: "2026-09-08"
 license: MIT
 repository-code: "https://github.com/Geconsult-code/analise_conformidade_sicar-incra"
 url: "https://github.com/Geconsult-code/analise_conformidade_sicar-incra"
