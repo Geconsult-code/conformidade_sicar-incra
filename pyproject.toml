@@ -3,7 +3,7 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "conformidade-sicar-incra"
+name = "analise-conformidade-sicar-incra"
 version = "0.3.0"
 description = "Classificação de coerência entre imóveis do SICAR e a delimitação fundiária do INCRA (SIGEF/SNCI), com filtro de sobreposição espacial e recorte temático (APP/RL/AUR)."
 readme = "README.md"
@@ -23,7 +23,7 @@ dependencies = [
 ]
 
 [project.urls]
-Repository = "https://github.com/Geconsult-code/Conformidade_sicar-incra"
+Repository = "https://github.com/Geconsult-code/analise_conformidade_sicar-incra"
 
 [project.scripts]
 conformidade = "conformidade.cli:main"

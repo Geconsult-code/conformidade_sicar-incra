@@ -15,8 +15,8 @@ authors:
 version: "0.3.0"
 date-released: "2026-08-10"
 license: MIT
-repository-code: "https://github.com/Geconsult-code/Conformidade_sicar-incra"
-url: "https://github.com/Geconsult-code/Conformidade_sicar-incra"
+repository-code: "https://github.com/Geconsult-code/analise_conformidade_sicar-incra"
+url: "https://github.com/Geconsult-code/analise_conformidade_sicar-incra"
 keywords:
   - SICAR
   - INCRA

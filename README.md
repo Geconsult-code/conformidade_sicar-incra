@@ -95,8 +95,8 @@ duplicado) e grava um relatório com os parâmetros usados.
 ### 2. Baixar o programa
 
 ```bash
-git clone https://github.com/Geconsult-code/Conformidade_sicar-incra.git
-cd Conformidade_sicar-incra
+git clone https://github.com/Geconsult-code/analise_conformidade_sicar-incra.git
+cd analise_conformidade_sicar-incra
 ```
 
 ### 3. Instalar as dependências
@@ -345,7 +345,7 @@ citação automaticamente a partir do arquivo [`CITATION.cff`](CITATION.cff)
 sugerido:
 
 > Braga Meira, M. (2026). *Conformidade SICAR × INCRA* (v0.1.0) [software].
-> Geoconsult Ltda. https://github.com/Geconsult-code/Conformidade_sicar-incra
+> Geoconsult Ltda. https://github.com/Geconsult-code/analise_conformidade_sicar-incra
 
 ## Licença
 

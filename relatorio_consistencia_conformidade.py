@@ -38,9 +38,10 @@ scripts deste projeto):
     conda activate geo
     python relatorio_consistencia_conformidade.py
 
-RECOMENDADO: primeira rodada so com AC (SOMENTE_ESTES ja vem assim por
-padrao, mesmo padrao usado nos outros scripts do projeto) para validar
-antes do lote completo (23 milhoes de feicoes / 27 estados).
+RECOMENDADO: para validar antes do lote completo (23 milhoes de feicoes /
+27 estados), rode uma vez com SOMENTE_ESTES = ["AC"] (ou outra UF pequena).
+O padrao de producao abaixo (SOMENTE_ESTES = [], REFAZER = []) processa
+todas as 27 UFs.
 """
 
 import os
@@ -73,9 +74,9 @@ FILES_TPL = [
 ]
 
 # --- ajuste aqui conforme a rodada ---
-SOMENTE_ESTES = ["AM"]   # reprocessar so o AM (2 layers falharam por geometria patologica - ja corrigido)
+SOMENTE_ESTES = []       # lista de UFs para restringir a rodada (ex.: ["AC"]); vazio = todas as 27 UFs (padrao de producao)
 PULAR = []
-REFAZER = ["AM"]          # forca regravar o AM mesmo com JSON existente
+REFAZER = []              # lista de UFs para forcar regravar mesmo com JSON existente; vazio = nenhuma (padrao de producao)
 # --------------------------------------
 
 HEARTBEAT_INTERVALO_S = 300
