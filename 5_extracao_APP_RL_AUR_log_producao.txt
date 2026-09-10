@@ -1,0 +1,246 @@
+Estados a processar (27): AC, AL, AM, AP, BA, CE, DF, ES, GO, MA, MG, MS, MT, PA, PB, PE, PI, PR, RJ, RN, RO, RR, RS, SC, SE, SP, TO
+Início: 20:08:16
+
+  [AC] Habilitados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\ACRE\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\ACRE\RESERVA_LEGAL\RESERVA_LEGAL_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=1751 | APP=30467 | RL=1682 | AUR=0
+  [AC] Analisados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\ACRE\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\ACRE\RESERVA_LEGAL\RESERVA_LEGAL_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=226 | APP=2229 | RL=167 | AUR=0
+  [AC] Nao_Analisados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\ACRE\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\ACRE\RESERVA_LEGAL\RESERVA_LEGAL_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=2961 | APP=26686 | RL=1873 | AUR=0
+  [AL] Habilitados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\ALAGOAS\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=10093 | APP=5163 | RL=2524 | AUR=2
+  [AL] Analisados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\ALAGOAS\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=1835 | APP=7373 | RL=856 | AUR=7
+  [AL] Nao_Analisados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\ALAGOAS\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=1898 | APP=4053 | RL=603 | AUR=12
+  [AM] Habilitados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\AMAZONAS\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\AMAZONAS\APPS\APPS_2.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\AMAZONAS\RESERVA_LEGAL\RESERVA_LEGAL_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\AMAZONAS\USO_RESTRITO\USO_RESTRITO_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=3408 | APP=31859 | RL=3277 | AUR=0
+  [AM] Analisados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\AMAZONAS\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\AMAZONAS\APPS\APPS_2.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\AMAZONAS\RESERVA_LEGAL\RESERVA_LEGAL_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\AMAZONAS\USO_RESTRITO\USO_RESTRITO_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=2446 | APP=20685 | RL=2111 | AUR=3
+  [AM] Nao_Analisados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\AMAZONAS\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\AMAZONAS\APPS\APPS_2.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\AMAZONAS\RESERVA_LEGAL\RESERVA_LEGAL_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\AMAZONAS\USO_RESTRITO\USO_RESTRITO_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=2868 | APP=31532 | RL=2302 | AUR=3
+  [AP] Habilitados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\AMAPA\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\AMAPA\RESERVA_LEGAL\RESERVA_LEGAL_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=1221 | APP=9431 | RL=1197 | AUR=1
+  [AP] Analisados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\AMAPA\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\AMAPA\RESERVA_LEGAL\RESERVA_LEGAL_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=993 | APP=2726 | RL=909 | AUR=1
+  [AP] Nao_Analisados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\AMAPA\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\AMAPA\RESERVA_LEGAL\RESERVA_LEGAL_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=528 | APP=4555 | RL=499 | AUR=8
+  [BA] Habilitados: extraindo temáticas...
+       (aviso: fonte vazia ou inexistente)
+  [BA] Analisados: extraindo temáticas...
+       (aviso: fonte vazia ou inexistente)
+  [BA] Nao_Analisados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\BAHIA\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=86208 | APP=68380 | RL=81818 | AUR=0
+  [CE] Habilitados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\CEARA\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\CEARA\RESERVA_LEGAL\RESERVA_LEGAL_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=71306 | APP=66049 | RL=37799 | AUR=236
+  [CE] Analisados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\CEARA\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\CEARA\RESERVA_LEGAL\RESERVA_LEGAL_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=11050 | APP=29631 | RL=8933 | AUR=13
+  [CE] Nao_Analisados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\CEARA\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\CEARA\RESERVA_LEGAL\RESERVA_LEGAL_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=5812 | APP=26810 | RL=5117 | AUR=298
+  [DF] Habilitados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\DISTRITO FEDERAL\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\DISTRITO FEDERAL\RESERVA_LEGAL\RESERVA_LEGAL_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=143 | APP=1586 | RL=100 | AUR=13
+  [DF] Analisados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\DISTRITO FEDERAL\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\DISTRITO FEDERAL\RESERVA_LEGAL\RESERVA_LEGAL_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=331 | APP=1977 | RL=247 | AUR=10
+  [DF] Nao_Analisados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\DISTRITO FEDERAL\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\DISTRITO FEDERAL\RESERVA_LEGAL\RESERVA_LEGAL_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=4586 | APP=20552 | RL=3090 | AUR=66
+  [ES] Habilitados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\ESPIRITO SANTO\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=79638 | APP=494356 | RL=117031 | AUR=623
+  [ES] Analisados: extraindo temáticas...
+       (aviso: fonte vazia ou inexistente)
+  [ES] Nao_Analisados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\ESPIRITO SANTO\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=5824 | APP=60775 | RL=18548 | AUR=27
+  [GO] Habilitados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\GOIAS\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\GOIAS\APPS\APPS_2.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\GOIAS\APPS\APPS_3.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\GOIAS\APPS\APPS_4.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\GOIAS\RESERVA_LEGAL\RESERVA_LEGAL_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=310 | APP=4901 | RL=452 | AUR=33
+  [GO] Analisados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\GOIAS\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\GOIAS\APPS\APPS_2.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\GOIAS\APPS\APPS_3.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\GOIAS\APPS\APPS_4.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\GOIAS\RESERVA_LEGAL\RESERVA_LEGAL_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=4778 | APP=52199 | RL=4383 | AUR=186
+  [GO] Nao_Analisados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\GOIAS\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\GOIAS\APPS\APPS_2.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\GOIAS\APPS\APPS_3.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\GOIAS\APPS\APPS_4.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\Users\User\OneDrive\Documentos\GitHub\analise_conformidade_sicar-incra\conformidade\io_dados.py:73: UserWarning: C:\Users\User\Dropbox\#CONSULTANCY\PLANAVEG\GEODATABASE\INCRA-CAR\Analise_Conformidade\dados_saída_GO\GO_geopackage\GO_Conformidade_Imoveis_Nao_Analisados.gpkg (5.83 GB) passou de ~2 GB após gravar 'CAR_GO_APP_Selecionados_Nao_Analisados'. Leitores rígidos (ArcGIS) podem recusá-lo. Considere dividir por tipo/origem.
+  warnings.warn(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\GOIAS\RESERVA_LEGAL\RESERVA_LEGAL_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\Users\User\OneDrive\Documentos\GitHub\analise_conformidade_sicar-incra\conformidade\io_dados.py:73: UserWarning: C:\Users\User\Dropbox\#CONSULTANCY\PLANAVEG\GEODATABASE\INCRA-CAR\Analise_Conformidade\dados_saída_GO\GO_geopackage\GO_Conformidade_Imoveis_Nao_Analisados.gpkg (6.35 GB) passou de ~2 GB após gravar 'CAR_GO_RL_Selecionados_Nao_Analisados'. Leitores rígidos (ArcGIS) podem recusá-lo. Considere dividir por tipo/origem.
+  warnings.warn(
+C:\Users\User\OneDrive\Documentos\GitHub\analise_conformidade_sicar-incra\conformidade\io_dados.py:73: UserWarning: C:\Users\User\Dropbox\#CONSULTANCY\PLANAVEG\GEODATABASE\INCRA-CAR\Analise_Conformidade\dados_saída_GO\GO_geopackage\GO_Conformidade_Imoveis_Nao_Analisados.gpkg (6.39 GB) passou de ~2 GB após gravar 'CAR_GO_AUR_Selecionados_Nao_Analisados'. Leitores rígidos (ArcGIS) podem recusá-lo. Considere dividir por tipo/origem.
+  warnings.warn(
+       selecionados=77300 | APP=931553 | RL=99461 | AUR=9786
+  [MA] Habilitados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MARANHAO\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MARANHAO\RESERVA_LEGAL\RESERVA_LEGAL_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=8074 | APP=6999 | RL=2619 | AUR=64
+  [MA] Analisados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MARANHAO\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MARANHAO\RESERVA_LEGAL\RESERVA_LEGAL_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=5918 | APP=49699 | RL=5393 | AUR=153
+  [MA] Nao_Analisados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MARANHAO\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MARANHAO\RESERVA_LEGAL\RESERVA_LEGAL_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=33095 | APP=91476 | RL=26010 | AUR=295
+  [MG] Habilitados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MINAS GERAIS\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MINAS GERAIS\APPS\APPS_2.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MINAS GERAIS\APPS\APPS_3.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MINAS GERAIS\APPS\APPS_4.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MINAS GERAIS\APPS\APPS_5.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MINAS GERAIS\APPS\APPS_6.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MINAS GERAIS\APPS\APPS_7.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MINAS GERAIS\RESERVA_LEGAL\RESERVA_LEGAL_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=61242 | APP=226156 | RL=37457 | AUR=72
+  [MG] Analisados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MINAS GERAIS\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MINAS GERAIS\APPS\APPS_2.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MINAS GERAIS\APPS\APPS_3.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MINAS GERAIS\APPS\APPS_4.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MINAS GERAIS\APPS\APPS_5.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MINAS GERAIS\APPS\APPS_6.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MINAS GERAIS\APPS\APPS_7.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MINAS GERAIS\RESERVA_LEGAL\RESERVA_LEGAL_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+       selecionados=21677 | APP=141343 | RL=17238 | AUR=586
+  [MG] Nao_Analisados: extraindo temáticas...
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MINAS GERAIS\APPS\APPS_1.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MINAS GERAIS\APPS\APPS_2.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MINAS GERAIS\APPS\APPS_3.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MINAS GERAIS\APPS\APPS_4.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MINAS GERAIS\APPS\APPS_5.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MINAS GERAIS\APPS\APPS_6.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(
+C:\PROGRA~1\QGIS34~1.11\apps\Python312\Lib\site-packages\pyogrio\raw.py:200: RuntimeWarning: C:\Users\User\Dropbox\Geoinformation\GEOINFO BRASIL\SICAR\BASE_CAR_ESTADOS_05_2026\MINAS GERAIS\APPS\APPS_7.shp contains polygon(s) with rings with invalid winding order. Autocorrecting them, but that shapefile should be corrected using ogr2ogr for example.
+  return ogr_read(

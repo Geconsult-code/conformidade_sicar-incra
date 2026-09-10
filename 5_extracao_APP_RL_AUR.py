@@ -3,7 +3,7 @@ r"""
 5_extracao_APP_RL_AUR.py — extrai as camadas temáticas APP / RESERVA_LEGAL /
 USO_RESTRITO (AUR) do SICAR bruto, para os imóveis já selecionados:
 
-  Habilitados      : TODOS os imóveis de <UF>_Imoveis_Privados_Habilitados.gpkg
+  Habilitados      : TODOS os imóveis de <UF>_Imoveis_Selecionados_Habilitados.gpkg
                       (não passam pela análise de conformidade do script 4 —
                       por definição já não têm pendência).
   Analisados       : só os "Representante (manter)" da análise de
@@ -144,7 +144,7 @@ def cods_alvo(pasta_gpkg: str, uf: str, categoria: str) -> tuple[set[str], str] 
     Retorna (cods, caminho_gpkg) ou None se a fonte não existir/estiver vazia.
     """
     if categoria == "Habilitados":
-        caminho = os.path.join(pasta_gpkg, f"{uf}_Imoveis_Privados_Habilitados.gpkg")
+        caminho = os.path.join(pasta_gpkg, f"{uf}_Imoveis_Selecionados_Habilitados.gpkg")
         layer = f"CAR_{uf}_Imoveis_Habilitados"
         if not os.path.exists(caminho):
             return None

@@ -89,7 +89,14 @@ def achar_incra(uf: str) -> list[gpd.GeoDataFrame]:
 
 
 def _ler_bucket(pasta_gpkg: str, uf: str, categoria: str) -> gpd.GeoDataFrame | None:
-    caminho = os.path.join(pasta_gpkg, f"{uf}_Imoveis_Privados_{categoria}.gpkg")
+    # Habilitados foi renomeado de _Imoveis_Privados_ para _Imoveis_Selecionados_
+    # (10/09/2026) -- os demais buckets (Analisados/Nao_Analisados/Outros_Analisado)
+    # continuam com o nome antigo _Imoveis_Privados_<categoria>.gpkg.
+    if categoria == "Habilitados":
+        nome_arquivo = f"{uf}_Imoveis_Selecionados_Habilitados.gpkg"
+    else:
+        nome_arquivo = f"{uf}_Imoveis_Privados_{categoria}.gpkg"
+    caminho = os.path.join(pasta_gpkg, nome_arquivo)
     if not os.path.exists(caminho):
         return None
     return ler_camada(caminho, f"CAR_{uf}_Imoveis_{categoria}")

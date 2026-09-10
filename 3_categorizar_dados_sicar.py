@@ -19,7 +19,7 @@ AREA_IMOVEL, Em Análise + Aguardando) — saída do script 2.
 
 Saída (mesma pasta <UF>_geopackage, mesmo padrão de nomes já usado no
 projeto para as camadas CAR_<UF>_...):
-    <UF>_Imoveis_Privados_Habilitados.gpkg     layer CAR_<UF>_Imoveis_Habilitados
+    <UF>_Imoveis_Selecionados_Habilitados.gpkg layer CAR_<UF>_Imoveis_Habilitados
     <UF>_Imoveis_Privados_Analisados.gpkg      layer CAR_<UF>_Imoveis_Analisados
     <UF>_Imoveis_Privados_Nao_Analisados.gpkg  layer CAR_<UF>_Imoveis_Nao_Analisados
 
@@ -129,7 +129,7 @@ def processar_uf(uf: str) -> dict:
         outros = analisado[classe == "outros"].copy()
 
         if len(habilitados) > 0:
-            out = os.path.join(pasta_gpkg, f"{uf}_Imoveis_Privados_Habilitados.gpkg")
+            out = os.path.join(pasta_gpkg, f"{uf}_Imoveis_Selecionados_Habilitados.gpkg")
             escrever_camada(habilitados, out, f"CAR_{uf}_Imoveis_Habilitados")
             resumo["habilitados"] = len(habilitados)
 
