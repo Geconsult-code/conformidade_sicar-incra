@@ -63,7 +63,7 @@ UFS = ["AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "
 
 # Saída dos scripts 3 (categorização), 4 (conformidade) e 5 (extração APP/RL/AUR).
 FILES_TPL = [
-    "{uf}_Imoveis_Selecionados_Habilitados.gpkg",
+    "{uf}_CAR_Imoveis_Selecionados_Habilitados.gpkg",
     "{uf}_Imoveis_Privados_Analisados.gpkg",
     "{uf}_Imoveis_Privados_Nao_Analisados.gpkg",
     "{uf}_Imoveis_Privados_Outros_Analisado.gpkg",   # auditoria do script 3 (pode não existir)

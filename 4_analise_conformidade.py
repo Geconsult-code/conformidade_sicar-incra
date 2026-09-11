@@ -93,7 +93,7 @@ def _ler_bucket(pasta_gpkg: str, uf: str, categoria: str) -> gpd.GeoDataFrame | 
     # (10/09/2026) -- os demais buckets (Analisados/Nao_Analisados/Outros_Analisado)
     # continuam com o nome antigo _Imoveis_Privados_<categoria>.gpkg.
     if categoria == "Habilitados":
-        nome_arquivo = f"{uf}_Imoveis_Selecionados_Habilitados.gpkg"
+        nome_arquivo = f"{uf}_CAR_Imoveis_Selecionados_Habilitados.gpkg"
     else:
         nome_arquivo = f"{uf}_Imoveis_Privados_{categoria}.gpkg"
     caminho = os.path.join(pasta_gpkg, nome_arquivo)
